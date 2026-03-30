@@ -5,7 +5,7 @@ RUN pip install --no-cache-dir poetry && \
 
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-interaction --no-ansi --only main
+RUN poetry install --no-interaction --no-ansi --only main --no-root
 
 COPY . .
 EXPOSE 8000
