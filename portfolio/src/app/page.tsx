@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <Navigation />
-      <main>
+      <main className="px-4 sm:px-6 lg:px-8">
         <Hero />
         <About />
         <Experience />

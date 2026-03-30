@@ -1,6 +1,6 @@
 from langchain_groq import ChatGroq
 from langchain_core.tools import tool
-from langchain.agents import create_agent
+from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.config import settings
@@ -57,9 +57,9 @@ llm = ChatGroq(
     streaming=True,
 )
 
-agent = create_agent(
+agent = create_react_agent(
     model=llm,
     tools=tools,
     checkpointer=memory,
-    system_prompt=SYSTEM_PROMPT,
+    prompt=SYSTEM_PROMPT,
 )
