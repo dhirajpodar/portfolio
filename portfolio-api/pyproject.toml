@@ -3,7 +3,6 @@ name = "portfolio-api"
 version = "0.1.0"
 description = "FastAPI + LangGraph chat backend for portfolio"
 authors = ["Dhiraj Poddar <dhirajpoddar@outlook.com>"]
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
