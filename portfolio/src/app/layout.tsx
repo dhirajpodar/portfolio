@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Navigation from "@/components/navigation";
+import { ChatProvider } from "@/lib/chat-context";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -84,7 +86,10 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-bg-primary text-text-primary antialiased">
-        {children}
+        <ChatProvider>
+          <Navigation />
+          <main className="pt-16">{children}</main>
+        </ChatProvider>
       </body>
     </html>
   );

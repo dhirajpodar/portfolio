@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import uuid
 
 from fastapi import FastAPI
@@ -49,20 +50,65 @@ async def stream_response(message: str, thread_id: str):
     config = {"configurable": {"thread_id": thread_id}}
     input_message = {"messages": [{"role": "user", "content": message}]}
 
+    has_emitted_thinking = False
+    tools_were_called = False
+
     try:
         async for event in agent.astream_events(input_message, config=config, version="v2"):
             kind = event.get("event")
-            if kind == "on_chat_model_stream":
+
+            if kind == "on_chat_model_start":
+                if not has_emitted_thinking:
+                    payload = json.dumps({"type": "thinking", "thread_id": thread_id})
+                    yield f"data: {payload}\n\n"
+                    has_emitted_thinking = True
+
+            elif kind == "on_tool_start":
+                tools_were_called = True
+                tool_name = event.get("name", "unknown")
+                payload = json.dumps({
+                    "type": "tool_start",
+                    "tool": tool_name,
+                    "thread_id": thread_id,
+                })
+                yield f"data: {payload}\n\n"
+
+            elif kind == "on_tool_end":
+                tool_name = event.get("name", "unknown")
+                output = str(event["data"].get("output", ""))
+                preview = output[:150] + "..." if len(output) > 150 else output
+                payload = json.dumps({
+                    "type": "tool_end",
+                    "tool": tool_name,
+                    "preview": preview,
+                    "thread_id": thread_id,
+                })
+                yield f"data: {payload}\n\n"
+
+            elif kind == "on_chat_model_stream":
                 content = event["data"]["chunk"].content
                 if content:
-                    payload = json.dumps({"content": content, "thread_id": thread_id})
-                    yield f"data: {payload}\n\n"
+                    # Strip leaked function call syntax from model output
+                    content = re.sub(r'<function=\w+>\{[^}]*\}</function>', '', content)
+                    content = re.sub(r'<function=\w+>[^<]*</function>', '', content)
+                    if content.strip():
+                        payload = json.dumps({
+                            "type": "content",
+                            "content": content,
+                            "thread_id": thread_id,
+                        })
+                        yield f"data: {payload}\n\n"
+
     except Exception as e:
         logger.error(f"Streaming error: {e}")
-        error_payload = json.dumps({"error": str(e), "thread_id": thread_id})
+        error_payload = json.dumps({
+            "type": "error",
+            "error": str(e),
+            "thread_id": thread_id,
+        })
         yield f"data: {error_payload}\n\n"
 
-    done_payload = json.dumps({"done": True, "thread_id": thread_id})
+    done_payload = json.dumps({"type": "done", "thread_id": thread_id})
     yield f"data: {done_payload}\n\n"
 
 
