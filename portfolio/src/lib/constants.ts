@@ -1,10 +1,5 @@
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export interface Stat {
-  value: string;
-  label: string;
-}
-
 export interface Experience {
   role: string;
   company: string;
@@ -53,27 +48,6 @@ export const PERSONAL = {
   linkedin: "https://www.linkedin.com/in/dhiraj-poddar/",
   github: "https://github.com/dhirajpodar",
 } as const;
-
-// ─── Hero ────────────────────────────────────────────────────────────────────
-
-export const HERO_TITLES: string[] = [
-  "Agentic AI Engineer",
-  "Multi-Agent Systems Architect",
-  "Cloud-Native Builder",
-  "RAG Pipeline Engineer",
-];
-
-// ─── About ───────────────────────────────────────────────────────────────────
-
-export const ABOUT_SUMMARY =
-  "I build production AI platforms. As the first engineer at an AI startup, I designed and shipped the entire technical foundation — from Azure cloud infrastructure to LangGraph multi-agent systems to a Next.js frontend with real-time AI streaming. 4+ years across backend engineering, AI/ML systems, and cloud-native deployment.";
-
-export const STATS: Stat[] = [
-  { value: "4+", label: "Years Experience" },
-  { value: "6", label: "Projects Shipped" },
-  { value: "3", label: "Companies" },
-  { value: "2", label: "Degrees" },
-];
 
 // ─── Experience ──────────────────────────────────────────────────────────────
 
@@ -356,12 +330,9 @@ export const EDUCATION: Education[] = [
 // ─── Navigation ──────────────────────────────────────────────────────────────
 
 export const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
-  { label: "Education", href: "#education" },
-  { label: "Contact", href: "#contact" },
+  { label: "Chat", href: "/" },
+  { label: "Blog", href: "/blog" },
+  { label: "About", href: "/about" },
 ] as const;
 
 // ─── Aliases (for cross-component compatibility) ─────────────────────────────

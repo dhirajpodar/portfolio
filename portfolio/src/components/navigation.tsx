@@ -1,92 +1,57 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
+import { useChatContext } from "@/lib/chat-context";
 
 export default function Navigation() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const pathname = usePathname();
+  const { resetChat } = useChatContext();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const sectionIds = NAV_LINKS.map((l) => l.href.replace("#", ""));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: "-20% 0px -70% 0px" }
-    );
-
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollTo = useCallback(
-    (href: string) => {
-      setMobileOpen(false);
-      const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-    },
-    []
-  );
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-bg-primary/80 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/10"
-            : "bg-transparent"
-        }`}
-      >
+      <nav className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="font-mono text-xl font-bold bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent"
+            <Link
+              href="/"
+              onClick={resetChat}
+              className="font-mono text-xl font-bold"
+              style={{
+                background: "linear-gradient(135deg, #a8a4ff, #9995ff)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
             >
               DP
-            </button>
+            </Link>
 
-            {/* Desktop Links */}
             <div className="hidden md:flex items-center gap-8">
               {NAV_LINKS.map((link) => (
-                <button
+                <Link
                   key={link.href}
-                  onClick={() => scrollTo(link.href)}
+                  href={link.href}
                   className={`text-sm font-medium transition-colors duration-200 ${
-                    activeSection === link.href.replace("#", "")
+                    isActive(link.href)
                       ? "text-accent-primary"
                       : "text-text-muted hover:text-text-primary"
                   }`}
                 >
                   {link.label}
-                </button>
+                </Link>
               ))}
             </div>
 
-            {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden text-text-primary p-2"
@@ -98,7 +63,6 @@ export default function Navigation() {
         </div>
       </nav>
 
-      {/* Mobile Overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -110,20 +74,24 @@ export default function Navigation() {
           >
             <div className="flex flex-col items-center justify-center h-full gap-8">
               {NAV_LINKS.map((link, i) => (
-                <motion.button
+                <motion.div
                   key={link.href}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 + 0.1 }}
-                  onClick={() => scrollTo(link.href)}
-                  className={`text-2xl font-semibold transition-colors ${
-                    activeSection === link.href.replace("#", "")
-                      ? "text-accent-primary"
-                      : "text-text-primary hover:text-accent-primary"
-                  }`}
                 >
-                  {link.label}
-                </motion.button>
+                  <Link
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`text-2xl font-semibold transition-colors ${
+                      isActive(link.href)
+                        ? "text-accent-primary"
+                        : "text-text-primary hover:text-accent-primary"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </motion.div>
