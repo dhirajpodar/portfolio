@@ -2,6 +2,8 @@ import { fetchBlogPosts } from "@/lib/blog-api";
 import BlogGrid from "@/components/blog/blog-grid";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blog | Dhiraj Poddar",
   description: "Thoughts on AI architecture, system design, LLMs, and MLOps.",

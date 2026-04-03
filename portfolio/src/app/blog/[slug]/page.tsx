@@ -8,14 +8,7 @@ import BlogCard from "@/components/blog/blog-card";
 import MarkdownContent from "@/components/blog/markdown-content";
 import type { Metadata } from "next";
 
-export async function generateStaticParams() {
-  try {
-    const { posts } = await fetchBlogPosts();
-    return posts.map((post) => ({ slug: post.slug }));
-  } catch {
-    return [];
-  }
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
