@@ -3,15 +3,12 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
   parseSSELine,
-  toolToCardType,
   type AgentStep,
-  type CardType,
 } from "./agent-events";
 
 export interface Message {
   role: "user" | "assistant";
   content: string;
-  cardTypes?: CardType[];
   agentSteps?: AgentStep[];
 }
 
@@ -29,13 +26,18 @@ export function useChat() {
   const [error, setError] = useState<string | null>(null);
   const [coldStartMsg, setColdStartMsg] = useState(false);
   const [agentSteps, setAgentSteps] = useState<AgentStep[]>([]);
-  const [activeCardTypes, setActiveCardTypes] = useState<CardType[]>([]);
   const [threadId] = useState(() => generateUUID());
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesEndRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const inViewport = rect.top < window.innerHeight + 200;
+    if (inViewport) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
   }, []);
 
   useEffect(() => {
@@ -53,8 +55,6 @@ export function useChat() {
       setError(null);
       setColdStartMsg(false);
       setAgentSteps([]);
-      setActiveCardTypes([]);
-
       const coldStartTimer = setTimeout(() => {
         setColdStartMsg(true);
       }, 3000);
@@ -67,7 +67,6 @@ export function useChat() {
 
       let generatingAdded = false;
       const collectedSteps: AgentStep[] = [];
-      const collectedCardTypes: CardType[] = [];
 
       try {
         const apiUrl =
@@ -134,11 +133,6 @@ export function useChat() {
                 collectedSteps.push(step);
                 setAgentSteps([...collectedSteps]);
 
-                const cardType = toolToCardType(data.tool);
-                if (cardType) {
-                  collectedCardTypes.push(cardType);
-                  setActiveCardTypes([...collectedCardTypes]);
-                }
                 break;
               }
               case "content": {
@@ -173,10 +167,6 @@ export function useChat() {
                     updated[updated.length - 1] = {
                       ...last,
                       agentSteps: [...collectedSteps],
-                      cardTypes:
-                        collectedCardTypes.length > 0
-                          ? [...collectedCardTypes]
-                          : undefined,
                     };
                   }
                   return updated;
@@ -233,7 +223,6 @@ export function useChat() {
     setError(null);
     setColdStartMsg(false);
     setAgentSteps([]);
-    setActiveCardTypes([]);
   }, []);
 
   return {
@@ -244,7 +233,6 @@ export function useChat() {
     error,
     coldStartMsg,
     agentSteps,
-    activeCardTypes,
     threadId,
     messagesEndRef,
     sendMessage,

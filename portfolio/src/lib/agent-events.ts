@@ -13,25 +13,6 @@ export interface AgentStep {
   timestamp: number;
 }
 
-export type CardType =
-  | "experience"
-  | "projects"
-  | "skills"
-  | "education"
-  | "contact"
-  | null;
-
-const TOOL_TO_CARD: Record<string, CardType> = {
-  get_experience: "experience",
-  get_projects: "projects",
-  get_skills: "skills",
-  get_education: "education",
-  get_contact: "contact",
-};
-
-export function toolToCardType(toolName: string): CardType {
-  return TOOL_TO_CARD[toolName] ?? null;
-}
 
 export function parseSSELine(line: string): SSEEvent | null {
   const trimmed = line.trim();

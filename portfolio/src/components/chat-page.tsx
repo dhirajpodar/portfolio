@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useChatContext } from "@/lib/chat-context";
-import CardRenderer from "./chat-cards/card-renderer";
 
 const SUGGESTED_QUESTIONS = [
   "What's your tech stack?",
@@ -23,7 +22,6 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
     isStreaming,
     error,
     coldStartMsg,
-    activeCardTypes,
     messagesEndRef,
     sendMessage,
     handleRetry,
@@ -123,16 +121,6 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
               )}
             </div>
 
-            {/* Card responses */}
-            {msg.role === "assistant" &&
-              i === messages.length - 1 &&
-              !isStreaming &&
-              activeCardTypes.length > 0 && (
-                <CardRenderer cardTypes={activeCardTypes} />
-              )}
-            {msg.role === "assistant" &&
-              i < messages.length - 1 &&
-              msg.cardTypes && <CardRenderer cardTypes={msg.cardTypes} />}
           </div>
         ))}
 

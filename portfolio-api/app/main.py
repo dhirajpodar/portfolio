@@ -3,6 +3,7 @@ import logging
 import re
 import uuid
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -51,53 +52,50 @@ async def stream_response(message: str, thread_id: str):
     input_message = {"messages": [{"role": "user", "content": message}]}
 
     has_emitted_thinking = False
-    tools_were_called = False
 
     try:
-        async for event in agent.astream_events(input_message, config=config, version="v2"):
-            kind = event.get("event")
+        async for event, metadata in agent.astream(
+            input_message, config=config, stream_mode="messages"
+        ):
+            msg_type = type(event).__name__
 
-            if kind == "on_chat_model_start":
-                if not has_emitted_thinking:
-                    payload = json.dumps({"type": "thinking", "thread_id": thread_id})
+            if msg_type == "AIMessageChunk":
+                # Tool call chunks — emit thinking + tool_start
+                tool_chunks = event.tool_call_chunks or []
+                if tool_chunks:
+                    if not has_emitted_thinking:
+                        payload = json.dumps({"type": "thinking", "thread_id": thread_id})
+                        yield f"data: {payload}\n\n"
+                        has_emitted_thinking = True
+                    for tc in tool_chunks:
+                        name = tc.get("name", "")
+                        if name:
+                            payload = json.dumps({
+                                "type": "tool_start",
+                                "tool": name,
+                                "thread_id": thread_id,
+                            })
+                            yield f"data: {payload}\n\n"
+
+                # Content token — stream word by word
+                elif event.content:
+                    payload = json.dumps({
+                        "type": "content",
+                        "content": event.content,
+                        "thread_id": thread_id,
+                    })
                     yield f"data: {payload}\n\n"
-                    has_emitted_thinking = True
 
-            elif kind == "on_tool_start":
-                tools_were_called = True
-                tool_name = event.get("name", "unknown")
-                payload = json.dumps({
-                    "type": "tool_start",
-                    "tool": tool_name,
-                    "thread_id": thread_id,
-                })
-                yield f"data: {payload}\n\n"
-
-            elif kind == "on_tool_end":
-                tool_name = event.get("name", "unknown")
-                output = str(event["data"].get("output", ""))
+            elif msg_type == "ToolMessage":
+                output = str(event.content)
                 preview = output[:150] + "..." if len(output) > 150 else output
                 payload = json.dumps({
                     "type": "tool_end",
-                    "tool": tool_name,
+                    "tool": event.name,
                     "preview": preview,
                     "thread_id": thread_id,
                 })
                 yield f"data: {payload}\n\n"
-
-            elif kind == "on_chat_model_stream":
-                content = event["data"]["chunk"].content
-                if content:
-                    # Strip leaked function call syntax from model output
-                    content = re.sub(r'<function=\w+>\{[^}]*\}</function>', '', content)
-                    content = re.sub(r'<function=\w+>[^<]*</function>', '', content)
-                    if content.strip():
-                        payload = json.dumps({
-                            "type": "content",
-                            "content": content,
-                            "thread_id": thread_id,
-                        })
-                        yield f"data: {payload}\n\n"
 
     except Exception as e:
         logger.error(f"Streaming error: {e}")
@@ -125,3 +123,7 @@ async def chat(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

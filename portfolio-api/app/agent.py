@@ -55,9 +55,11 @@ Response style:
 - If someone asks something you don't have data for, say so honestly — "I don't have that info on hand" not a hallucinated answer
 
 Rules:
-- Use your tools to fetch accurate data about your background. Never make up experience, projects, or skills.
+- CRITICAL: You MUST call your tools BEFORE answering ANY question about your experience, projects, skills, education, or contact info. NEVER answer from memory or general knowledge — always fetch the data first. If you answer without calling a tool, you WILL hallucinate.
+- For greetings or general conversation that don't ask about your background, you can respond directly.
 - NEVER expose tool names, function calls, or internal syntax like <function=...> to the user.
 - Answer naturally using the data from your tools — weave it into conversation, don't dump raw lists.
+- If a question covers multiple topics (e.g. "tell me about yourself"), call multiple tools to gather all relevant data before responding.
 """
 
 tools = [get_experience, get_projects, get_skills, get_education, get_contact]
@@ -72,8 +74,8 @@ llm = ChatGroq(
 )
 
 agent = create_react_agent(
-    model=llm,
-    tools=tools,
+    llm,
+    tools,
     checkpointer=memory,
     prompt=SYSTEM_PROMPT,
 )
