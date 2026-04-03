@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 
 function stripMarkdown(text: string): string {
   return text
@@ -15,14 +15,10 @@ function stripMarkdown(text: string): string {
 
 export function useSpeechSynthesis() {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isSupported, setIsSupported] = useState(false);
+  const [isSupported] = useState(
+    () => typeof window !== "undefined" && "speechSynthesis" in window,
+  );
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-
-  useEffect(() => {
-    setIsSupported(
-      typeof window !== "undefined" && "speechSynthesis" in window,
-    );
-  }, []);
 
   const speak = useCallback(
     (text: string) => {
