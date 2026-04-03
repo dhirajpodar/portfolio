@@ -2,11 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export interface TocHeading {
-  id: string;
-  text: string;
-  level: number;
-}
+import type { TocHeading } from "@/lib/blog-api";
 
 export default function TocSidebar({ headings }: { headings: TocHeading[] }) {
   const [activeId, setActiveId] = useState("");

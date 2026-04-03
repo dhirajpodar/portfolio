@@ -4,13 +4,14 @@ import re
 import uuid
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from app.config import settings
 from app.agent import agent
+from app.blog import load_all_posts, load_post, get_all_tags
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -123,6 +124,20 @@ async def chat(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@app.get("/blog")
+async def list_posts():
+    posts = load_all_posts()
+    return {"posts": posts, "tags": get_all_tags(posts)}
+
+
+@app.get("/blog/{slug}")
+async def get_post(slug: str):
+    post = load_post(slug)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return post
 
 
 if __name__ == "__main__":

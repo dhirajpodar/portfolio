@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock } from "lucide-react";
-import type { BlogPost } from "@/lib/blog-data";
+import type { BlogPost } from "@/lib/blog-api";
 
 export default function BlogCard({ post }: { post: BlogPost }) {
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {

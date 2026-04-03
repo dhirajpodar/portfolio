@@ -1,4 +1,4 @@
-import { BLOG_POSTS } from "@/lib/blog-data";
+import { fetchBlogPosts } from "@/lib/blog-api";
 import BlogGrid from "@/components/blog/blog-grid";
 import type { Metadata } from "next";
 
@@ -7,7 +7,8 @@ export const metadata: Metadata = {
   description: "Thoughts on AI architecture, system design, LLMs, and MLOps.",
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const { posts, tags } = await fetchBlogPosts();
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1
@@ -19,7 +20,7 @@ export default function BlogPage() {
       <p className="text-text-muted mb-10">
         Notes on building AI systems in production.
       </p>
-      <BlogGrid posts={BLOG_POSTS} />
+      <BlogGrid posts={posts} availableTags={tags} />
     </div>
   );
 }

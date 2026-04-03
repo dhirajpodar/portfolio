@@ -1,17 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BLOG_TAGS, type BlogTag } from "@/lib/blog-data";
 
 interface TagFilterProps {
-  activeTag: BlogTag;
-  onTagChange: (tag: BlogTag) => void;
+  tags: string[];
+  activeTag: string;
+  onTagChange: (tag: string) => void;
 }
 
-export default function TagFilter({ activeTag, onTagChange }: TagFilterProps) {
+export default function TagFilter({ tags, activeTag, onTagChange }: TagFilterProps) {
   return (
     <div className="flex flex-wrap gap-2">
-      {BLOG_TAGS.map((tag) => {
+      {tags.map((tag) => {
         const isActive = activeTag === tag;
         return (
           <motion.button

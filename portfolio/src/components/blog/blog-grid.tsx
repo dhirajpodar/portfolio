@@ -4,16 +4,29 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TagFilter from "./tag-filter";
 import BlogCard from "./blog-card";
-import { getPostsByTag, type BlogTag, type BlogPost } from "@/lib/blog-data";
+import type { BlogPost } from "@/lib/blog-api";
 
-export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
-  const [activeTag, setActiveTag] = useState<BlogTag>("All");
-  const filtered = activeTag === "All" ? posts : getPostsByTag(activeTag);
+export default function BlogGrid({
+  posts,
+  availableTags,
+}: {
+  posts: BlogPost[];
+  availableTags: string[];
+}) {
+  const [activeTag, setActiveTag] = useState("All");
+  const filtered =
+    activeTag === "All"
+      ? posts
+      : posts.filter((p) => p.tags.includes(activeTag));
 
   return (
     <div>
       <div className="mb-8">
-        <TagFilter activeTag={activeTag} onTagChange={setActiveTag} />
+        <TagFilter
+          tags={availableTags}
+          activeTag={activeTag}
+          onTagChange={setActiveTag}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

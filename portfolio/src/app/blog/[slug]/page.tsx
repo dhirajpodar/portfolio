@@ -1,15 +1,20 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock } from "lucide-react";
-import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
-import { POST_COMPONENTS, getPostHeadings } from "@/content";
+import { fetchBlogPosts, fetchBlogPost } from "@/lib/blog-api";
 import BlogArticle from "@/components/blog/blog-article";
 import TocSidebar from "@/components/blog/toc-sidebar";
 import BlogCard from "@/components/blog/blog-card";
+import MarkdownContent from "@/components/blog/markdown-content";
 import type { Metadata } from "next";
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  try {
+    const { posts } = await fetchBlogPosts();
+    return posts.map((post) => ({ slug: post.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -18,7 +23,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await fetchBlogPost(slug);
   if (!post) return {};
   return {
     title: `${post.title} | Dhiraj Poddar`,
@@ -32,15 +37,11 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await fetchBlogPost(slug);
   if (!post) notFound();
 
-  const Content = POST_COMPONENTS[slug];
-  if (!Content) notFound();
-
-  const headings = await getPostHeadings(slug);
-
-  const otherPosts = BLOG_POSTS.filter((p) => p.slug !== slug).slice(0, 2);
+  const { posts: allPosts } = await fetchBlogPosts();
+  const otherPosts = allPosts.filter((p) => p.slug !== slug).slice(0, 2);
 
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     month: "long",
@@ -111,9 +112,9 @@ export default async function BlogPostPage({
       {/* Content + TOC */}
       <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12">
         <BlogArticle>
-          <Content />
+          <MarkdownContent content={post.content} />
         </BlogArticle>
-        <TocSidebar headings={headings} />
+        <TocSidebar headings={post.headings} />
       </div>
 
       {/* Divider */}
