@@ -13,7 +13,7 @@ const SUGGESTED_QUESTIONS = [
   "What are you working on?",
 ];
 
-export default function ChatPage() {
+export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -31,7 +31,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (messages.length === 0 && inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus({ preventScroll: true });
     }
   }, [messages.length]);
 
@@ -41,7 +41,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-[750px] mx-auto px-4">
+    <div className={`flex flex-col max-w-[750px] mx-auto px-4 ${embedded ? "min-h-[70vh]" : "h-[calc(100vh-4rem)]"}`}>
       {/* Messages area */}
       <div className="flex-1 min-h-0 overflow-y-auto py-6 space-y-4">
         {/* Welcome state */}
@@ -56,11 +56,12 @@ export default function ChatPage() {
               className="text-3xl sm:text-4xl font-bold mb-3 text-text-heading"
               style={{ letterSpacing: "-0.04em" }}
             >
-              Hey, I&apos;m Dhiraj
+              {embedded ? "What would you like to know?" : "Hey, I\u2019m Dhiraj"}
             </h1>
             <p className="text-text-muted text-center max-w-md mb-8">
-              An AI Engineer. Ask me about my work, how I think, or what
-              I&apos;m building.
+              {embedded
+                ? "Ask about my experience, projects, tech stack, or how I approach problems."
+                : "An AI Engineer. Ask me about my work, how I think, or what I\u2019m building."}
             </p>
 
             <div className="flex flex-wrap justify-center gap-3">

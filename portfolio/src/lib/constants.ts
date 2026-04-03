@@ -332,6 +332,7 @@ export const EDUCATION: Education[] = [
 export const NAV_LINKS = [
   { label: "Chat", href: "/" },
   { label: "Blog", href: "/blog" },
+  { label: "About", href: "/about" },
 ] as const;
 
 // ─── Aliases (for cross-component compatibility) ─────────────────────────────

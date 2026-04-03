@@ -1,5 +1,5 @@
-import ChatPage from "@/components/chat-page";
+import LandingPage from "@/components/landing/landing-page";
 
 export default function Home() {
-  return <ChatPage />;
+  return <LandingPage />;
 }
