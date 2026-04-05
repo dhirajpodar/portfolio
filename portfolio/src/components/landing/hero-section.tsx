@@ -12,7 +12,7 @@ const fadeUp = {
 export default function HeroSection() {
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 sm:px-6">
-      <div className="w-full max-w-[750px]">
+      <div className="w-full max-w-[750px] text-center">
         {/* Name */}
         <motion.h1
           {...fadeUp}
@@ -41,9 +41,9 @@ export default function HeroSection() {
         <motion.p
           {...fadeUp}
           transition={{ duration: 0.4, delay: 0.16 }}
-          className="mt-8 text-lg italic text-text-heading sm:text-xl"
+          className="mt-8 text-2xl text-text-heading sm:text-3xl"
         >
-          &ldquo;I didn&rsquo;t update my resume. I made it obsolete.&rdquo;
+          Why read a <span style={{ color: "#a8a4ff" }} className="text-3xl font-bold sm:text-4xl">resume</span> when you can have a <span style={{ color: "#a8a4ff" }} className="text-3xl font-bold sm:text-4xl">conversation</span>?
         </motion.p>
 
         {/* CTA */}
