@@ -1,19 +1,22 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useChatContext } from "@/lib/chat-context";
 
-const SUGGESTED_QUESTIONS = [
-  "What's your tech stack?",
-  "How do you approach system design?",
-  "What are you working on?",
+const FALLBACK_QUESTIONS = [
+  "What have you built with AI agents?",
+  "What do you write about?",
+  "What drives you outside of work?",
+  "Are you open to new opportunities?",
+  "Walk me through a tough problem you solved",
 ];
 
 export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>(FALLBACK_QUESTIONS);
 
   const {
     messages,
@@ -22,10 +25,21 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
     isStreaming,
     error,
     coldStartMsg,
+    followUps,
     messagesEndRef,
     sendMessage,
     handleRetry,
   } = useChatContext();
+
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    fetch(`${apiUrl}/suggested-questions`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.questions?.length) setSuggestedQuestions(data.questions);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (messages.length === 0 && inputRef.current) {
@@ -63,7 +77,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
             </p>
 
             <div className="flex flex-wrap justify-center gap-3">
-              {SUGGESTED_QUESTIONS.map((q) => (
+              {suggestedQuestions.map((q) => (
                 <motion.button
                   key={q}
                   whileHover={{
@@ -123,6 +137,34 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
 
           </div>
         ))}
+
+        {/* Follow-up suggestions */}
+        {followUps.length > 0 && !isStreaming && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-wrap gap-2 pt-2"
+          >
+            {followUps.map((q) => (
+              <motion.button
+                key={q}
+                whileHover={{
+                  boxShadow: "0 0 4px rgba(168, 164, 255, 0.1)",
+                }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => sendMessage(q)}
+                className="rounded-full px-4 py-2 text-xs transition-colors cursor-pointer"
+                style={{
+                  backgroundColor: "#201f1f",
+                  color: "#adaaaa",
+                }}
+              >
+                {q}
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
 
         {coldStartMsg && (
           <div className="text-center">

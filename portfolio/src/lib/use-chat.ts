@@ -26,6 +26,7 @@ export function useChat() {
   const [error, setError] = useState<string | null>(null);
   const [coldStartMsg, setColdStartMsg] = useState(false);
   const [agentSteps, setAgentSteps] = useState<AgentStep[]>([]);
+  const [followUps, setFollowUps] = useState<string[]>([]);
   const [threadId] = useState(() => generateUUID());
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -55,6 +56,7 @@ export function useChat() {
       setError(null);
       setColdStartMsg(false);
       setAgentSteps([]);
+      setFollowUps([]);
       const coldStartTimer = setTimeout(() => {
         setColdStartMsg(true);
       }, 3000);
@@ -158,14 +160,23 @@ export function useChat() {
                 });
                 break;
               }
+              case "followups": {
+                setFollowUps(data.questions);
+                break;
+              }
               case "done": {
-                // Persist steps and card types into the message
+                // Persist steps, strip followup comment from content
                 setMessages((prev) => {
                   const updated = [...prev];
                   const last = updated[updated.length - 1];
                   if (last && last.role === "assistant") {
+                    const cleaned = last.content.replace(
+                      /<!--\s*followups:\s*\[[\s\S]*?\]\s*-->/,
+                      ""
+                    ).trimEnd();
                     updated[updated.length - 1] = {
                       ...last,
+                      content: cleaned,
                       agentSteps: [...collectedSteps],
                     };
                   }
@@ -223,6 +234,7 @@ export function useChat() {
     setError(null);
     setColdStartMsg(false);
     setAgentSteps([]);
+    setFollowUps([]);
   }, []);
 
   return {
@@ -233,6 +245,7 @@ export function useChat() {
     error,
     coldStartMsg,
     agentSteps,
+    followUps,
     threadId,
     messagesEndRef,
     sendMessage,
