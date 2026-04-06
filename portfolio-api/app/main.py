@@ -43,9 +43,36 @@ async def startup():
     logger.info("Portfolio API started")
 
 
+SUGGESTED_QUESTIONS = [
+    "What have you built with AI agents?",
+    "What do you write about?",
+    "What drives you outside of work?",
+    "Are you open to new opportunities?",
+    "Walk me through a tough problem you solved",
+]
+
+
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+@app.get("/suggested-questions")
+async def suggested_questions():
+    return {"questions": SUGGESTED_QUESTIONS}
+
+
+def extract_followups(text: str) -> tuple[str, list[str]]:
+    """Extract follow-up questions from <!-- followups: [...] --> comment and return cleaned text + questions."""
+    match = re.search(r"<!--\s*followups:\s*(\[.*?\])\s*-->", text, re.DOTALL)
+    if not match:
+        return text, []
+    try:
+        questions = json.loads(match.group(1))
+    except (json.JSONDecodeError, ValueError):
+        return text, []
+    cleaned = text[:match.start()].rstrip()
+    return cleaned, questions
 
 
 async def stream_response(message: str, thread_id: str):
@@ -53,6 +80,7 @@ async def stream_response(message: str, thread_id: str):
     input_message = {"messages": [{"role": "user", "content": message}]}
 
     has_emitted_thinking = False
+    full_content = ""
 
     try:
         async for event, metadata in agent.astream(
@@ -80,6 +108,7 @@ async def stream_response(message: str, thread_id: str):
 
                 # Content token — stream word by word
                 elif event.content:
+                    full_content += event.content
                     payload = json.dumps({
                         "type": "content",
                         "content": event.content,
@@ -106,6 +135,16 @@ async def stream_response(message: str, thread_id: str):
             "thread_id": thread_id,
         })
         yield f"data: {error_payload}\n\n"
+
+    # Extract follow-up questions and emit as separate event
+    _, followups = extract_followups(full_content)
+    if followups:
+        followup_payload = json.dumps({
+            "type": "followups",
+            "questions": followups,
+            "thread_id": thread_id,
+        })
+        yield f"data: {followup_payload}\n\n"
 
     done_payload = json.dumps({"type": "done", "thread_id": thread_id})
     yield f"data: {done_payload}\n\n"

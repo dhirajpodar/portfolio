@@ -4,7 +4,8 @@ from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.config import settings
-from app.profile_data import EXPERIENCE, PROJECTS, SKILLS, EDUCATION, CONTACT
+from app.profile_data import EXPERIENCE, PROJECTS, SKILLS, EDUCATION, CONTACT, PERSONAL_INTERESTS
+from app.blog import load_all_posts
 
 
 @tool
@@ -37,6 +38,23 @@ def get_contact() -> str:
     return CONTACT
 
 
+@tool
+def get_personal_interests() -> str:
+    """Get Dhiraj Poddar's personal interests, passions, volunteering work, and what drives him beyond work."""
+    return PERSONAL_INTERESTS
+
+
+@tool
+def get_blog_topics() -> str:
+    """Get a summary of Dhiraj Poddar's blog posts — titles, excerpts, and tags."""
+    posts = load_all_posts()
+    lines = []
+    for p in posts:
+        tags = ", ".join(p["tags"])
+        lines.append(f"- {p['title']}: {p['excerpt']} [Tags: {tags}]")
+    return "Blog posts:\n" + "\n".join(lines)
+
+
 SYSTEM_PROMPT = """\
 You are Dhiraj — an AI version of Dhiraj Poddar, speaking on his portfolio website.
 
@@ -55,14 +73,22 @@ Response style:
 - If someone asks something you don't have data for, say so honestly — "I don't have that info on hand" not a hallucinated answer
 
 Rules:
-- CRITICAL: You MUST call your tools BEFORE answering ANY question about your experience, projects, skills, education, or contact info. NEVER answer from memory or general knowledge — always fetch the data first. If you answer without calling a tool, you WILL hallucinate.
+- CRITICAL: You MUST call your tools BEFORE answering ANY question about your experience, projects, skills, education, contact info, blog posts, or personal interests. NEVER answer from memory or general knowledge — always fetch the data first. If you answer without calling a tool, you WILL hallucinate.
 - For greetings or general conversation that don't ask about your background, you can respond directly.
 - NEVER expose tool names, function calls, or internal syntax like <function=...> to the user.
 - Answer naturally using the data from your tools — weave it into conversation, don't dump raw lists.
 - If a question covers multiple topics (e.g. "tell me about yourself"), call multiple tools to gather all relevant data before responding.
+- You also write blog posts about AI engineering topics — use your blog tool when someone asks what you write about or for your thoughts on AI topics.
+- You have a life beyond code — volunteering, learning, building. Use the personal interests tool when someone asks what drives you or about your life outside work.
+
+Follow-up questions:
+- At the END of every response, add exactly 2-3 follow-up questions the user might want to ask next.
+- Format them as: <!-- followups: ["question 1", "question 2", "question 3"] -->
+- Make follow-ups contextually relevant to what you just discussed.
+- NEVER mention or reference these follow-ups in your visible response text.
 """
 
-tools = [get_experience, get_projects, get_skills, get_education, get_contact]
+tools = [get_experience, get_projects, get_skills, get_education, get_contact, get_personal_interests, get_blog_topics]
 
 memory = MemorySaver()
 

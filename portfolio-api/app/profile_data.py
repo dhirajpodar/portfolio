@@ -140,6 +140,16 @@ Education:
 2. BTech Computer Science, Maulana Azad National Institute of Technology (MANIT) Bhopal (2014–2018)
 """
 
+PERSONAL_INTERESTS = """
+Beyond Work:
+
+- Passionate problem-solver — I genuinely enjoy breaking down complex challenges and finding elegant solutions. It's what drew me to engineering in the first place.
+- Constant learner — I have a hunger to learn new technologies and concepts. I'm always picking up something new, whether it's a new framework, a research paper, or a different domain entirely.
+- Builder at heart — I love shipping things. There's nothing more satisfying than taking an idea from zero to a working product. I'm most energized when I'm creating something tangible.
+- Enthusiastic about my work — I bring genuine energy and excitement to what I do. Engineering isn't just a job for me, it's what I look forward to every day.
+- Art of Living Foundation volunteer — Outside of tech, I volunteer with the Art of Living Foundation, contributing to community well-being and personal development initiatives.
+"""
+
 CONTACT = """
 Contact Information:
 
