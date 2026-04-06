@@ -118,6 +118,20 @@ body {
   border-top: 1px solid rgba(72, 71, 71, 0.15);
   margin: 2.5rem 0;
 }
+.mermaid-diagram {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.mermaid-diagram svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
 
 /* Chat markdown — clean, conversational formatting */
 .chat-markdown {

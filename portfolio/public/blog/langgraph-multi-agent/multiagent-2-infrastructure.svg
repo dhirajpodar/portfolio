@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" font-family="'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0e1a"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    <linearGradient id="dataGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c1917"/>
+      <stop offset="100%" stop-color="#141210"/>
+    </linearGradient>
+    <linearGradient id="cacheGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c1508"/>
+      <stop offset="100%" stop-color="#151005"/>
+    </linearGradient>
+    <linearGradient id="supportGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0c1018"/>
+    </linearGradient>
+
+    <marker id="arrowHead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+    </marker>
+    <marker id="arrowHeadAmber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowHeadGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="520" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Grid -->
+  <g opacity="0.03">
+    <line x1="60" y1="0" x2="60" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="120" y1="0" x2="120" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="180" y1="0" x2="180" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="240" y1="0" x2="240" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="300" y1="0" x2="300" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="360" y1="0" x2="360" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="420" y1="0" x2="420" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="480" y1="0" x2="480" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="540" y1="0" x2="540" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="600" y1="0" x2="600" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="660" y1="0" x2="660" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="720" y1="0" x2="720" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="780" y1="0" x2="780" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="840" y1="0" x2="840" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="900" y1="0" x2="900" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="960" y1="0" x2="960" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="1020" y1="0" x2="1020" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="1080" y1="0" x2="1080" y2="520" stroke="#fff" stroke-width="0.5"/>
+    <line x1="1140" y1="0" x2="1140" y2="520" stroke="#fff" stroke-width="0.5"/>
+  </g>
+
+  <!-- ==================== TITLE ==================== -->
+  <text x="600" y="32" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="700" letter-spacing="0.5">Multi-Agent System — Infrastructure Layer</text>
+  <text x="600" y="52" text-anchor="middle" fill="#64748b" font-size="10" letter-spacing="0.3">PostgreSQL · Redis Multi-Level Cache · Azure Services · Prefetch Daemon</text>
+
+  <!-- Incoming from Agent Layer indicator -->
+  <rect x="80" y="68" width="1040" height="28" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="0.7"/>
+  <text x="600" y="86" text-anchor="middle" fill="#64748b" font-size="8">⬇  Receives requests from Agent Layer (10 domain agents across 4 workers)  ⬇</text>
+
+  <!-- Arrows down -->
+  <line x1="300" y1="96" x2="300" y2="116" stroke="#57534e" stroke-width="1.5" marker-end="url(#arrowHead)"/>
+  <line x1="600" y1="96" x2="600" y2="116" stroke="#57534e" stroke-width="1.5" marker-end="url(#arrowHead)"/>
+  <line x1="900" y1="96" x2="900" y2="116" stroke="#57534e" stroke-width="1.5" marker-end="url(#arrowHead)"/>
+
+  <!-- ==================== DATA LAYER ==================== -->
+  <rect x="80" y="120" width="500" height="155" rx="10" fill="url(#dataGrad)" stroke="#44403c" stroke-width="1"/>
+  <text x="98" y="142" fill="#d6d3d1" font-size="9" font-weight="700" letter-spacing="1.2">DATA LAYER</text>
+
+  <!-- PostgreSQL -->
+  <rect x="98" y="154" width="225" height="108" rx="6" fill="#1c1917" stroke="#57534e" stroke-width="0.8"/>
+  <text x="113" y="174" fill="#d6d3d1" font-size="10" font-weight="600">PostgreSQL</text>
+  <text x="113" y="190" fill="#a8a29e" font-size="8">LangGraph checkpoints</text>
+  <text x="113" y="204" fill="#a8a29e" font-size="8">Async pool: 2–10 connections</text>
+  <text x="113" y="218" fill="#a8a29e" font-size="8">Cross-worker state persistence</text>
+  <rect x="113" y="230" width="195" height="18" rx="4" fill="#292524" stroke="#44403c" stroke-width="0.5"/>
+  <text x="123" y="243" fill="#78716c" font-size="7">Thread: sess_abc_METAL · sess_xyz_CHEM</text>
+
+  <!-- Domain APIs -->
+  <rect x="340" y="154" width="225" height="108" rx="6" fill="#1c1917" stroke="#57534e" stroke-width="0.8"/>
+  <text x="355" y="174" fill="#d6d3d1" font-size="10" font-weight="600">Domain APIs</text>
+  <text x="355" y="190" fill="#a8a29e" font-size="8">11 REST endpoints · HTTPS</text>
+  <text x="355" y="204" fill="#a8a29e" font-size="8">Source of truth for pricing data</text>
+  <text x="355" y="218" fill="#a8a29e" font-size="8">Materials, chemicals, regions...</text>
+  <rect x="355" y="230" width="65" height="18" rx="4" fill="#292524" stroke="#ef4444" stroke-width="0.5"/>
+  <text x="365" y="243" fill="#ef4444" font-size="7.5">~200ms</text>
+  <text x="430" y="243" fill="#78716c" font-size="7">L4 source of truth</text>
+
+  <!-- ==================== CACHE LAYER ==================== -->
+  <rect x="600" y="120" width="520" height="155" rx="10" fill="url(#cacheGrad)" stroke="#78716c" stroke-width="1"/>
+  <text x="618" y="142" fill="#fbbf24" font-size="9" font-weight="700" letter-spacing="1.2">MULTI-LEVEL CACHE</text>
+
+  <!-- L1 -->
+  <rect x="618" y="154" width="152" height="108" rx="6" fill="#1c1508" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="630" y="162" width="22" height="14" rx="3" fill="#f59e0b"/>
+  <text x="636" y="173" fill="#1c1508" font-size="8" font-weight="700">L1</text>
+  <text x="658" y="173" fill="#fbbf24" font-size="9" font-weight="600">In-Memory</text>
+  <text x="630" y="190" fill="#d97706" font-size="8">&lt; 1ms</text>
+  <text x="630" y="206" fill="#b45309" font-size="7.5">LLM client singletons</text>
+  <text x="630" y="220" fill="#b45309" font-size="7.5">Agent graph instances</text>
+  <text x="630" y="234" fill="#b45309" font-size="7.5">One per model+temp combo</text>
+  <text x="630" y="250" fill="#92400e" font-size="7">Scope: per worker</text>
+
+  <!-- miss arrow -->
+  <line x1="770" y1="208" x2="786" y2="208" stroke="#92400e" stroke-width="0.8" marker-end="url(#arrowHeadAmber)"/>
+  <text x="773" y="200" fill="#92400e" font-size="6.5">miss</text>
+
+  <!-- L2 -->
+  <rect x="790" y="154" width="152" height="108" rx="6" fill="#1c1508" stroke="#d97706" stroke-width="0.8"/>
+  <rect x="802" y="162" width="22" height="14" rx="3" fill="#d97706"/>
+  <text x="808" y="173" fill="#1c1508" font-size="8" font-weight="700">L2</text>
+  <text x="830" y="173" fill="#fbbf24" font-size="9" font-weight="600">Agent State</text>
+  <text x="802" y="190" fill="#d97706" font-size="8">&lt; 1ms</text>
+  <text x="802" y="206" fill="#b45309" font-size="7.5">Material catalogs</text>
+  <text x="802" y="220" fill="#b45309" font-size="7.5">Region lists</text>
+  <text x="802" y="234" fill="#b45309" font-size="7.5">Loaded once per invocation</text>
+  <text x="802" y="250" fill="#92400e" font-size="7">Scope: per invocation</text>
+
+  <!-- miss arrow -->
+  <line x1="942" y1="208" x2="958" y2="208" stroke="#92400e" stroke-width="0.8" marker-end="url(#arrowHeadAmber)"/>
+  <text x="945" y="200" fill="#92400e" font-size="6.5">miss</text>
+
+  <!-- L3 Redis -->
+  <rect x="962" y="154" width="145" height="108" rx="6" fill="#1c1508" stroke="#b45309" stroke-width="0.8"/>
+  <rect x="974" y="162" width="22" height="14" rx="3" fill="#b45309"/>
+  <text x="980" y="173" fill="#1c1508" font-size="8" font-weight="700">L3</text>
+  <text x="1002" y="173" fill="#fbbf24" font-size="9" font-weight="600">Redis</text>
+  <text x="974" y="190" fill="#d97706" font-size="8">~2ms · Azure Redis TLS</text>
+  <text x="974" y="206" fill="#b45309" font-size="7.5">API response cache</text>
+  <text x="974" y="220" fill="#b45309" font-size="7.5">Session metadata</text>
+  <text x="974" y="234" fill="#b45309" font-size="7.5">Reference data · 1hr TTL</text>
+  <text x="974" y="250" fill="#92400e" font-size="7">Scope: cross-worker</text>
+
+  <!-- L3 miss → L4 Domain API -->
+  <path d="M962 260 L910 260 L600 260 L565 240" stroke="#92400e" stroke-width="0.8" fill="none" marker-end="url(#arrowHeadAmber)" stroke-dasharray="4,2"/>
+  <text x="750" y="256" fill="#92400e" font-size="6.5">L3 miss → hit Domain APIs (L4)</text>
+
+  <!-- ==================== SUPPORTING SERVICES ==================== -->
+  <rect x="80" y="295" width="1040" height="82" rx="10" fill="url(#supportGrad)" stroke="#1f2937" stroke-width="1"/>
+  <text x="98" y="316" fill="#9ca3af" font-size="9" font-weight="700" letter-spacing="1.2">SUPPORTING SERVICES</text>
+
+  <!-- Azure Key Vault -->
+  <rect x="98" y="326" width="210" height="38" rx="6" fill="#111827" stroke="#374151" stroke-width="0.8"/>
+  <text x="113" y="344" fill="#60a5fa" font-size="9" font-weight="600">🔐 Azure Key Vault</text>
+  <text x="113" y="358" fill="#6b7280" font-size="7.5">Secrets · Config · Certificates</text>
+
+  <!-- LLM API -->
+  <rect x="330" y="326" width="210" height="38" rx="6" fill="#111827" stroke="#374151" stroke-width="0.8"/>
+  <text x="345" y="344" fill="#a78bfa" font-size="9" font-weight="600">🧠 LLM API</text>
+  <text x="345" y="358" fill="#6b7280" font-size="7.5">Routing · Extraction · Reasoning</text>
+
+  <!-- PostHog Analytics -->
+  <rect x="562" y="326" width="210" height="38" rx="6" fill="#111827" stroke="#374151" stroke-width="0.8"/>
+  <text x="577" y="344" fill="#f472b6" font-size="9" font-weight="600">📊 PostHog Analytics</text>
+  <text x="577" y="358" fill="#6b7280" font-size="7.5">Events · Usage · Performance</text>
+
+  <!-- Prefetch Daemon -->
+  <rect x="794" y="326" width="310" height="38" rx="6" fill="#0d2818" stroke="#22c55e" stroke-width="0.8"/>
+  <text x="809" y="344" fill="#6ee7b7" font-size="9" font-weight="600">⚡ Prefetch Daemon</text>
+  <text x="809" y="358" fill="#4ade80" font-size="7.5">Background thread warms Redis L3 on user login</text>
+
+  <!-- Prefetch → Redis connection -->
+  <path d="M1040 326 L1040 270" stroke="#22c55e" stroke-width="0.8" fill="none" marker-end="url(#arrowHeadGreen)" stroke-dasharray="4,2"/>
+  <text x="1048" y="300" fill="#22c55e" font-size="6.5">warm</text>
+
+  <!-- ==================== KEY DESIGN DECISIONS ==================== -->
+  <rect x="80" y="395" width="1040" height="75" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="98" y="416" fill="#64748b" font-size="8" font-weight="600" letter-spacing="1">KEY DESIGN DECISIONS</text>
+
+  <g transform="translate(98, 430)">
+    <rect width="8" height="8" rx="2" fill="#22c55e"/>
+    <text x="14" y="8" fill="#94a3b8" font-size="8">80% queries routed at zero LLM cost via pattern matching</text>
+  </g>
+  <g transform="translate(98, 448)">
+    <rect width="8" height="8" rx="2" fill="#f59e0b"/>
+    <text x="14" y="8" fill="#94a3b8" font-size="8">4-level cache hierarchy: &lt;1ms in-memory → ~2ms Redis → ~200ms API fallback</text>
+  </g>
+  <g transform="translate(600, 430)">
+    <rect width="8" height="8" rx="2" fill="#8b5cf6"/>
+    <text x="14" y="8" fill="#94a3b8" font-size="8">2 agent architectures matched to domain complexity</text>
+  </g>
+  <g transform="translate(600, 448)">
+    <rect width="8" height="8" rx="2" fill="#6366f1"/>
+    <text x="14" y="8" fill="#94a3b8" font-size="8">Stateless JWE auth → scale workers via config, not architecture</text>
+  </g>
+
+  <!-- ==================== LEGEND ==================== -->
+  <rect x="80" y="482" width="1040" height="28" rx="6" fill="#0a0e1a" stroke="#1e293b" stroke-width="0.8"/>
+
+  <line x1="100" y1="499" x2="130" y2="499" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowHead)"/>
+  <text x="137" y="502" fill="#94a3b8" font-size="7.5">Data flow</text>
+
+  <line x1="220" y1="499" x2="250" y2="499" stroke="#92400e" stroke-width="0.8" stroke-dasharray="4,2" marker-end="url(#arrowHeadAmber)"/>
+  <text x="257" y="502" fill="#94a3b8" font-size="7.5">Cache miss path</text>
+
+  <line x1="370" y1="499" x2="400" y2="499" stroke="#22c55e" stroke-width="0.8" stroke-dasharray="4,2" marker-end="url(#arrowHeadGreen)"/>
+  <text x="407" y="502" fill="#94a3b8" font-size="7.5">Prefetch warm</text>
+
+  <rect x="510" y="493" width="12" height="12" rx="3" fill="#1c1508" stroke="#f59e0b" stroke-width="0.8"/>
+  <text x="528" y="502" fill="#94a3b8" font-size="7.5">Cache layer</text>
+
+  <rect x="610" y="493" width="12" height="12" rx="3" fill="#1c1917" stroke="#57534e" stroke-width="0.8"/>
+  <text x="628" y="502" fill="#94a3b8" font-size="7.5">Database / API</text>
+
+  <rect x="730" y="493" width="12" height="12" rx="3" fill="#111827" stroke="#374151" stroke-width="0.8"/>
+  <text x="748" y="502" fill="#94a3b8" font-size="7.5">Supporting service</text>
+
+  <text x="880" y="502" fill="#475569" font-size="7">PostgreSQL · Redis · Azure Key Vault · Gunicorn/Uvicorn</text>
+</svg>
