@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import re
@@ -12,6 +13,7 @@ from pydantic import BaseModel
 from app.config import settings
 from app.agent import agent
 from app.blog import load_all_posts, load_post, get_all_tags
+from app.notifications import notify_new_question
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -153,6 +155,8 @@ async def stream_response(message: str, thread_id: str):
 @app.post("/chat")
 async def chat(request: ChatRequest):
     thread_id = request.thread_id or str(uuid.uuid4())
+
+    asyncio.create_task(notify_new_question(request.message, thread_id))
 
     return StreamingResponse(
         stream_response(request.message, thread_id),
