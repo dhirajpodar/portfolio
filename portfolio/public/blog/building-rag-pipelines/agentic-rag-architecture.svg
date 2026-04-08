@@ -1,0 +1,2593 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 1200 1080"
+   font-family="'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif"
+   version="1.1"
+   id="svg678"
+   sodipodi:docname="agentic-rag-architecture.svg"
+   inkscape:version="1.2.1 (9c6d41e, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview680"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.4988833"
+     inkscape:cx="562.08511"
+     inkscape:cy="207.15421"
+     inkscape:window-width="1440"
+     inkscape:window-height="847"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg678" />
+  <defs
+     id="defs62">
+    <linearGradient
+       id="bgGrad"
+       x1="0"
+       y1="0"
+       x2="0"
+       y2="1">
+      <stop
+         offset="0%"
+         stop-color="#0a0e1a"
+         id="stop2" />
+      <stop
+         offset="100%"
+         stop-color="#0d1117"
+         id="stop4" />
+    </linearGradient>
+    <linearGradient
+       id="ingestGrad"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0%"
+         stop-color="#0d2818"
+         id="stop7" />
+      <stop
+         offset="100%"
+         stop-color="#071f12"
+         id="stop9" />
+    </linearGradient>
+    <linearGradient
+       id="dbGrad"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0%"
+         stop-color="#1c1917"
+         id="stop12" />
+      <stop
+         offset="100%"
+         stop-color="#141210"
+         id="stop14" />
+    </linearGradient>
+    <linearGradient
+       id="searchGrad"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0%"
+         stop-color="#1c1508"
+         id="stop17" />
+      <stop
+         offset="100%"
+         stop-color="#151005"
+         id="stop19" />
+    </linearGradient>
+    <linearGradient
+       id="agentGrad"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0%"
+         stop-color="#1a1a2e"
+         id="stop22" />
+      <stop
+         offset="100%"
+         stop-color="#16132b"
+         id="stop24" />
+    </linearGradient>
+    <linearGradient
+       id="evalGrad"
+       x1="0"
+       y1="0"
+       x2="1"
+       y2="1">
+      <stop
+         offset="0%"
+         stop-color="#1a1520"
+         id="stop27" />
+      <stop
+         offset="100%"
+         stop-color="#13101a"
+         id="stop29" />
+    </linearGradient>
+    <marker
+       id="arrowHead"
+       markerWidth="8"
+       markerHeight="6"
+       refX="8"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0 0, 8 3, 0 6"
+         fill="#64748b"
+         id="polygon32" />
+    </marker>
+    <marker
+       id="arrowGreen"
+       markerWidth="8"
+       markerHeight="6"
+       refX="8"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0 0, 8 3, 0 6"
+         fill="#22c55e"
+         id="polygon35" />
+    </marker>
+    <marker
+       id="arrowPurple"
+       markerWidth="8"
+       markerHeight="6"
+       refX="8"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0 0, 8 3, 0 6"
+         fill="#8b5cf6"
+         id="polygon38" />
+    </marker>
+    <marker
+       id="arrowAmber"
+       markerWidth="8"
+       markerHeight="6"
+       refX="8"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0 0, 8 3, 0 6"
+         fill="#f59e0b"
+         id="polygon41" />
+    </marker>
+    <marker
+       id="arrowBlue"
+       markerWidth="8"
+       markerHeight="6"
+       refX="8"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0 0, 8 3, 0 6"
+         fill="#6366f1"
+         id="polygon44" />
+    </marker>
+    <marker
+       id="arrowRed"
+       markerWidth="8"
+       markerHeight="6"
+       refX="8"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0 0, 8 3, 0 6"
+         fill="#ef4444"
+         id="polygon47" />
+    </marker>
+    <marker
+       id="arrowCyan"
+       markerWidth="8"
+       markerHeight="6"
+       refX="8"
+       refY="3"
+       orient="auto">
+      <polygon
+         points="0 0, 8 3, 0 6"
+         fill="#22d3ee"
+         id="polygon50" />
+    </marker>
+    <filter
+       id="glow">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur53" />
+      <feMerge
+         id="feMerge59">
+        <feMergeNode
+           in="blur"
+           id="feMergeNode55" />
+        <feMergeNode
+           in="SourceGraphic"
+           id="feMergeNode57" />
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect
+     width="1200"
+     height="1080"
+     fill="url(#bgGrad)"
+     rx="12"
+     id="rect64" />
+  <!-- Grid -->
+  <g
+     opacity="0.025"
+     id="g104">
+    <line
+       x1="60"
+       y1="0"
+       x2="60"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line66" />
+    <line
+       x1="120"
+       y1="0"
+       x2="120"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line68" />
+    <line
+       x1="180"
+       y1="0"
+       x2="180"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line70" />
+    <line
+       x1="240"
+       y1="0"
+       x2="240"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line72" />
+    <line
+       x1="300"
+       y1="0"
+       x2="300"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line74" />
+    <line
+       x1="360"
+       y1="0"
+       x2="360"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line76" />
+    <line
+       x1="420"
+       y1="0"
+       x2="420"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line78" />
+    <line
+       x1="480"
+       y1="0"
+       x2="480"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line80" />
+    <line
+       x1="540"
+       y1="0"
+       x2="540"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line82" />
+    <line
+       x1="600"
+       y1="0"
+       x2="600"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line84" />
+    <line
+       x1="660"
+       y1="0"
+       x2="660"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line86" />
+    <line
+       x1="720"
+       y1="0"
+       x2="720"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line88" />
+    <line
+       x1="780"
+       y1="0"
+       x2="780"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line90" />
+    <line
+       x1="840"
+       y1="0"
+       x2="840"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line92" />
+    <line
+       x1="900"
+       y1="0"
+       x2="900"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line94" />
+    <line
+       x1="960"
+       y1="0"
+       x2="960"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line96" />
+    <line
+       x1="1020"
+       y1="0"
+       x2="1020"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line98" />
+    <line
+       x1="1080"
+       y1="0"
+       x2="1080"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line100" />
+    <line
+       x1="1140"
+       y1="0"
+       x2="1140"
+       y2="1080"
+       stroke="#fff"
+       stroke-width="0.5"
+       id="line102" />
+  </g>
+  <!-- ==================== TITLE ==================== -->
+  <text
+     x="600"
+     y="30"
+     text-anchor="middle"
+     fill="#e2e8f0"
+     font-size="15"
+     font-weight="700"
+     letter-spacing="0.5"
+     id="text106">Production Agentic RAG System Architecture</text>
+  <text
+     x="600"
+     y="48"
+     text-anchor="middle"
+     fill="#64748b"
+     font-size="10"
+     letter-spacing="0.3"
+     id="text108">LangGraph · 3-Way Hybrid Search · Structure-Aware Chunking · Self-Correcting Quality Loops · PostgreSQL + pgvector</text>
+  <!-- ==================== TWO FLOW LABELS ==================== -->
+  <!-- Ingestion flow label -->
+  <rect
+     x="48"
+     y="70"
+     width="16"
+     height="400"
+     rx="8"
+     fill="#064e3b"
+     opacity="0.5"
+     id="rect110" />
+  <text
+     x="56"
+     y="290"
+     fill="#6ee7b7"
+     font-size="9"
+     font-weight="700"
+     letter-spacing="1.5"
+     text-anchor="middle"
+     transform="rotate(-90, 56, 290)"
+     id="text112">INGESTION FLOW</text>
+  <!-- Query flow label -->
+  <rect
+     x="48"
+     y="540"
+     width="16"
+     height="490"
+     rx="8"
+     fill="#312e81"
+     opacity="0.5"
+     id="rect114" />
+  <text
+     x="56"
+     y="790"
+     fill="#a5b4fc"
+     font-size="9"
+     font-weight="700"
+     letter-spacing="1.5"
+     text-anchor="middle"
+     transform="rotate(-90, 56, 790)"
+     id="text116">QUERY FLOW</text>
+  <!-- ==================== DOCUMENT SOURCES ==================== -->
+  <rect
+     x="80"
+     y="70"
+     width="1050"
+     height="48"
+     rx="8"
+     fill="#0f172a"
+     stroke="#1e293b"
+     stroke-width="1"
+     id="rect118" />
+  <text
+     x="98"
+     y="88"
+     fill="#94a3b8"
+     font-size="8"
+     font-weight="600"
+     letter-spacing="1.2"
+     id="text120">DOCUMENT SOURCES</text>
+  <!-- Format chips -->
+  <g
+     transform="translate(98, 96)"
+     id="g158">
+    <rect
+       width="42"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect122" />
+    <text
+       x="21"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text124">PDF</text>
+    <rect
+       x="50"
+       width="50"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect126" />
+    <text
+       x="75"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text128">DOCX</text>
+    <rect
+       x="108"
+       width="50"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect130" />
+    <text
+       x="133"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text132">PPTX</text>
+    <rect
+       x="166"
+       width="50"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect134" />
+    <text
+       x="191"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text136">HTML</text>
+    <rect
+       x="224"
+       width="50"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect138" />
+    <text
+       x="249"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text140">XLSX</text>
+    <rect
+       x="282"
+       width="42"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect142" />
+    <text
+       x="303"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text144">CSV</text>
+    <rect
+       x="332"
+       width="42"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect146" />
+    <text
+       x="353"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text148">MD</text>
+    <rect
+       x="382"
+       width="50"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect150" />
+    <text
+       x="407"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text152">Images</text>
+    <rect
+       x="440"
+       width="40"
+       height="16"
+       rx="8"
+       fill="#1e293b"
+       stroke="#475569"
+       stroke-width="0.5"
+       id="rect154" />
+    <text
+       x="460"
+       y="11"
+       text-anchor="middle"
+       fill="#cbd5e1"
+       font-size="7"
+       font-weight="500"
+       id="text156">TXT</text>
+  </g>
+  <!-- Arrow down -->
+  <line
+     x1="600"
+     y1="118"
+     x2="600"
+     y2="135"
+     stroke="#475569"
+     stroke-width="1.5"
+     marker-end="url(#arrowHead)"
+     id="line160" />
+  <!-- ==================== INGESTION PIPELINE ==================== -->
+  <rect
+     x="80"
+     y="138"
+     width="1050"
+     height="195"
+     rx="10"
+     fill="url(#ingestGrad)"
+     stroke="#1a4a2e"
+     stroke-width="1"
+     id="rect162" />
+  <text
+     x="98"
+     y="158"
+     fill="#6ee7b7"
+     font-size="8.5"
+     font-weight="700"
+     letter-spacing="1.2"
+     id="text164">INGESTION PIPELINE</text>
+  <text
+     x="98"
+     y="170"
+     fill="#4ade80"
+     font-size="7"
+     id="text166">6 sequential steps · Async processing · Concurrency-controlled enrichment</text>
+  <!-- Step 1: Dedup -->
+  <rect
+     x="98"
+     y="182"
+     width="105"
+     height="65"
+     rx="6"
+     fill="#064e3b"
+     stroke="#10b981"
+     stroke-width="0.8"
+     id="rect168" />
+  <rect
+     x="98"
+     y="182"
+     width="105"
+     height="16"
+     rx="6"
+     fill="#10b981"
+     id="rect170" />
+  <rect
+     x="98"
+     y="192"
+     width="105"
+     height="6"
+     rx="0"
+     fill="#064e3b"
+     id="rect172" />
+  <text
+     x="144.66269"
+     y="189.66418"
+     text-anchor="middle"
+     fill="#022c22"
+     font-size="7.5px"
+     font-weight="700"
+     id="text174">1 · DEDUP</text>
+  <text
+     x="108"
+     y="211"
+     fill="#6ee7b7"
+     font-size="7"
+     id="text176">SHA-256 file hash</text>
+  <text
+     x="108"
+     y="222"
+     fill="#34d399"
+     font-size="6.5"
+     id="text178">Skip if already ingested</text>
+  <text
+     x="108"
+     y="233"
+     fill="#34d399"
+     font-size="6.5"
+     id="text180">Status tracking per doc</text>
+  <line
+     x1="203"
+     y1="214"
+     x2="222"
+     y2="214"
+     stroke="#10b981"
+     stroke-width="1"
+     marker-end="url(#arrowGreen)"
+     id="line182" />
+  <!-- Step 2: Parse -->
+  <rect
+     x="225"
+     y="182"
+     width="130"
+     height="65"
+     rx="6"
+     fill="#064e3b"
+     stroke="#10b981"
+     stroke-width="0.8"
+     id="rect184" />
+  <rect
+     x="225"
+     y="182"
+     width="130"
+     height="16"
+     rx="6"
+     fill="#10b981"
+     id="rect186" />
+  <rect
+     x="225"
+     y="192"
+     width="130"
+     height="6"
+     rx="0"
+     fill="#064e3b"
+     id="rect188" />
+  <text
+     x="280.6597"
+     y="189.66418"
+     text-anchor="middle"
+     fill="#022c22"
+     font-size="7.5px"
+     font-weight="700"
+     id="text190">2 · PARSE</text>
+  <text
+     x="235"
+     y="211"
+     fill="#6ee7b7"
+     font-size="7"
+     id="text192">Docling (rich parsing)</text>
+  <text
+     x="235"
+     y="222"
+     fill="#34d399"
+     font-size="6.5"
+     id="text194">Built-in (MD, CSV, TXT)</text>
+  <text
+     x="235"
+     y="233"
+     fill="#34d399"
+     font-size="6.5"
+     id="text196">MarkItDown (fallback)</text>
+  <line
+     x1="355"
+     y1="214"
+     x2="374"
+     y2="214"
+     stroke="#10b981"
+     stroke-width="1"
+     marker-end="url(#arrowGreen)"
+     id="line198" />
+  <!-- Step 3: Chunk -->
+  <rect
+     x="377"
+     y="182"
+     width="148"
+     height="65"
+     rx="6"
+     fill="#064e3b"
+     stroke="#22c55e"
+     stroke-width="1"
+     id="rect200" />
+  <rect
+     x="377"
+     y="182"
+     width="148"
+     height="16"
+     rx="6"
+     fill="#22c55e"
+     id="rect202" />
+  <rect
+     x="377"
+     y="192"
+     width="148"
+     height="6"
+     rx="0"
+     fill="#064e3b"
+     id="rect204" />
+  <text
+     x="450.33282"
+     y="190.9985"
+     text-anchor="middle"
+     fill="#022c22"
+     font-size="7.5px"
+     font-weight="700"
+     id="text206">3 · STRUCTURE-AWARE CHUNK</text>
+  <text
+     x="387"
+     y="211"
+     fill="#6ee7b7"
+     font-size="7"
+     id="text208">Headings = boundaries</text>
+  <text
+     x="387"
+     y="222"
+     fill="#34d399"
+     font-size="6.5"
+     id="text210">Tables/code never split</text>
+  <text
+     x="387"
+     y="233"
+     fill="#34d399"
+     font-size="6.5"
+     id="text212">~512 tok · heading breadcrumbs</text>
+  <line
+     x1="525"
+     y1="214"
+     x2="544"
+     y2="214"
+     stroke="#10b981"
+     stroke-width="1"
+     marker-end="url(#arrowGreen)"
+     id="line214" />
+  <!-- Step 4: Embed -->
+  <rect
+     x="547"
+     y="182"
+     width="130"
+     height="65"
+     rx="6"
+     fill="#064e3b"
+     stroke="#10b981"
+     stroke-width="0.8"
+     id="rect216" />
+  <rect
+     x="547"
+     y="182"
+     width="130"
+     height="16"
+     rx="6"
+     fill="#10b981"
+     id="rect218" />
+  <rect
+     x="547"
+     y="192"
+     width="130"
+     height="6"
+     rx="0"
+     fill="#064e3b"
+     id="rect220" />
+  <text
+     x="606.66272"
+     y="189.66418"
+     text-anchor="middle"
+     fill="#022c22"
+     font-size="7.5px"
+     font-weight="700"
+     id="text222">4 · EMBED</text>
+  <text
+     x="557"
+     y="211"
+     fill="#6ee7b7"
+     font-size="7"
+     id="text224">text-embedding-3-small</text>
+  <text
+     x="557"
+     y="222"
+     fill="#34d399"
+     font-size="6.5"
+     id="text226">1536 dimensions</text>
+  <text
+     x="557"
+     y="233"
+     fill="#34d399"
+     font-size="6.5"
+     id="text228">Batch of 512</text>
+  <line
+     x1="677"
+     y1="214"
+     x2="696"
+     y2="214"
+     stroke="#10b981"
+     stroke-width="1"
+     marker-end="url(#arrowGreen)"
+     id="line230" />
+  <!-- Step 5: Enrich -->
+  <rect
+     x="699"
+     y="182"
+     width="175"
+     height="65"
+     rx="6"
+     fill="#064e3b"
+     stroke="#f59e0b"
+     stroke-width="1"
+     id="rect232" />
+  <rect
+     x="699"
+     y="182"
+     width="175"
+     height="16"
+     rx="6"
+     fill="#f59e0b"
+     id="rect234" />
+  <rect
+     x="699"
+     y="192"
+     width="175"
+     height="6"
+     rx="0"
+     fill="#064e3b"
+     id="rect236" />
+  <text
+     x="784.66565"
+     y="190.33134"
+     text-anchor="middle"
+     fill="#451a03"
+     font-size="7.5px"
+     font-weight="700"
+     id="text238">5 · LLM METADATA ENRICH</text>
+  <text
+     x="709"
+     y="211"
+     fill="#fbbf24"
+     font-size="7"
+     id="text240">Summary · Keywords (3-7)</text>
+  <text
+     x="709"
+     y="222"
+     fill="#d97706"
+     font-size="6.5"
+     id="text242">Hypothetical questions (2-3)</text>
+  <text
+     x="709"
+     y="233"
+     fill="#d97706"
+     font-size="6.5"
+     id="text244">Concurrency semaphore: 5 parallel</text>
+  <line
+     x1="874"
+     y1="214"
+     x2="893"
+     y2="214"
+     stroke="#10b981"
+     stroke-width="1"
+     marker-end="url(#arrowGreen)"
+     id="line246" />
+  <!-- Step 6: Store -->
+  <rect
+     x="896"
+     y="182"
+     width="115"
+     height="65"
+     rx="6"
+     fill="#064e3b"
+     stroke="#10b981"
+     stroke-width="0.8"
+     id="rect248" />
+  <rect
+     x="896"
+     y="182"
+     width="115"
+     height="16"
+     rx="6"
+     fill="#10b981"
+     id="rect250" />
+  <rect
+     x="896"
+     y="192"
+     width="115"
+     height="6"
+     rx="0"
+     fill="#064e3b"
+     id="rect252" />
+  <text
+     x="951.66565"
+     y="190.33134"
+     text-anchor="middle"
+     fill="#022c22"
+     font-size="7.5px"
+     font-weight="700"
+     id="text254">6 · STORE</text>
+  <text
+     x="906"
+     y="211"
+     fill="#6ee7b7"
+     font-size="7"
+     id="text256">PostgreSQL + pgvector</text>
+  <text
+     x="906"
+     y="222"
+     fill="#34d399"
+     font-size="6.5"
+     id="text258">ACID transactions</text>
+  <text
+     x="906"
+     y="233"
+     fill="#34d399"
+     font-size="6.5"
+     id="text260">Docs + chunks 1:N</text>
+  <!-- DocumentElement output note -->
+  <rect
+     x="98"
+     y="258"
+     width="530"
+     height="28"
+     rx="5"
+     fill="#0d2818"
+     stroke="#1a4a2e"
+     stroke-width="0.5"
+     id="rect262" />
+  <text
+     x="108"
+     y="271"
+     fill="#4ade80"
+     font-size="7"
+     id="text264">Output: DocumentElement objects → {type: heading|paragraph|table|code|list, content: &quot;...&quot;, heading_path: &quot;ML &gt; Supervised Learning&quot;}</text>
+  <text
+     x="108"
+     y="281"
+     fill="#22c55e"
+     font-size="6.5"
+     id="text266">Post-pass: chunks &lt;100 tokens merged with neighbors · Oversized paragraphs get sentence-level split with 50-token overlap</text>
+  <!-- Enrichment detail note -->
+  <rect
+     x="640"
+     y="258"
+     width="480"
+     height="28"
+     rx="5"
+     fill="#1c1508"
+     stroke="#78716c"
+     stroke-width="0.5"
+     id="rect268" />
+  <text
+     x="650"
+     y="271"
+     fill="#fbbf24"
+     font-size="7"
+     id="text270">Hypothetical Qs bridge user queries ↔ document content (semantic pre-computation)</text>
+  <text
+     x="650"
+     y="281"
+     fill="#d97706"
+     font-size="6.5"
+     id="text272">LLM cost paid once at ingestion → improves every subsequent query at zero marginal cost</text>
+  <!-- Arrow: Ingestion → Database -->
+  <line
+     x1="953"
+     y1="248"
+     x2="953"
+     y2="338"
+     stroke="#57534e"
+     stroke-width="1.5"
+     marker-end="url(#arrowHead)"
+     id="line274" />
+  <text
+     x="960"
+     y="310"
+     fill="#64748b"
+     font-size="7"
+     id="text276">store</text>
+  <!-- ==================== DATABASE LAYER ==================== -->
+  <rect
+     x="80"
+     y="342"
+     width="1050"
+     height="125"
+     rx="10"
+     fill="url(#dbGrad)"
+     stroke="#44403c"
+     stroke-width="1"
+     id="rect278" />
+  <text
+     x="98"
+     y="362"
+     fill="#d6d3d1"
+     font-size="8.5"
+     font-weight="700"
+     letter-spacing="1.2"
+     id="text280">DATABASE LAYER</text>
+  <text
+     x="98"
+     y="373"
+     fill="#a8a29e"
+     font-size="7"
+     id="text282">PostgreSQL 16 + pgvector · Single database for everything · No separate vector DB</text>
+  <!-- Documents table -->
+  <rect
+     x="98"
+     y="382"
+     width="260"
+     height="72"
+     rx="6"
+     fill="#1c1917"
+     stroke="#57534e"
+     stroke-width="0.8"
+     id="rect284" />
+  <rect
+     x="98"
+     y="382"
+     width="260"
+     height="15"
+     rx="6"
+     fill="#292524"
+     id="rect286" />
+  <rect
+     x="98"
+     y="391"
+     width="260"
+     height="6"
+     rx="0"
+     fill="#1c1917"
+     id="rect288" />
+  <text
+     x="225.0789"
+     y="389.10519"
+     text-anchor="middle"
+     fill="#a8a29e"
+     font-size="7.5px"
+     font-weight="700"
+     id="text290">documents</text>
+  <text
+     x="108"
+     y="410"
+     fill="#d6d3d1"
+     font-size="7"
+     id="text292">id · filename · file_hash (SHA-256)</text>
+  <text
+     x="108"
+     y="422"
+     fill="#a8a29e"
+     font-size="7"
+     id="text294">content_type · status · metadata</text>
+  <text
+     x="108"
+     y="434"
+     fill="#a8a29e"
+     font-size="7"
+     id="text296">created_at · updated_at</text>
+  <text
+     x="108"
+     y="446"
+     fill="#78716c"
+     font-size="6.5"
+     id="text298">Dedup via file_hash · Status tracking</text>
+  <!-- 1:N relationship arrow -->
+  <line
+     x1="358"
+     y1="418"
+     x2="400"
+     y2="418"
+     stroke="#a8a29e"
+     stroke-width="1"
+     marker-end="url(#arrowHead)"
+     id="line300" />
+  <text
+     x="373"
+     y="412"
+     fill="#78716c"
+     font-size="7"
+     font-weight="600"
+     id="text302">1:N</text>
+  <!-- Chunks table -->
+  <rect
+     x="403"
+     y="382"
+     width="310"
+     height="72"
+     rx="6"
+     fill="#1c1917"
+     stroke="#57534e"
+     stroke-width="0.8"
+     id="rect304" />
+  <rect
+     x="403"
+     y="382"
+     width="310"
+     height="15"
+     rx="6"
+     fill="#292524"
+     id="rect306" />
+  <rect
+     x="403"
+     y="391"
+     width="310"
+     height="6"
+     rx="0"
+     fill="#1c1917"
+     id="rect308" />
+  <text
+     x="558"
+     y="390.07889"
+     text-anchor="middle"
+     fill="#a8a29e"
+     font-size="7.5px"
+     font-weight="700"
+     id="text310">chunks</text>
+  <text
+     x="413"
+     y="410"
+     fill="#d6d3d1"
+     font-size="7"
+     id="text312">id · document_id · content · heading_path</text>
+  <text
+     x="413"
+     y="422"
+     fill="#a8a29e"
+     font-size="7"
+     id="text314">embedding (vector 1536) · summary · keywords[]</text>
+  <text
+     x="413"
+     y="434"
+     fill="#a8a29e"
+     font-size="7"
+     id="text316">hypothetical_questions · chunk_index · token_count</text>
+  <text
+     x="413"
+     y="446"
+     fill="#78716c"
+     font-size="6.5"
+     id="text318">Enriched metadata for multi-signal retrieval</text>
+  <!-- Indexes -->
+  <rect
+     x="740"
+     y="382"
+     width="375"
+     height="72"
+     rx="6"
+     fill="#1c1917"
+     stroke="#78716c"
+     stroke-width="0.8"
+     id="rect320" />
+  <rect
+     x="740"
+     y="382"
+     width="375"
+     height="15"
+     rx="6"
+     fill="#292524"
+     id="rect322" />
+  <rect
+     x="740"
+     y="391"
+     width="375"
+     height="6"
+     rx="0"
+     fill="#1c1917"
+     id="rect324" />
+  <text
+     x="925.05261"
+     y="390.07889"
+     text-anchor="middle"
+     fill="#a8a29e"
+     font-size="7.5px"
+     font-weight="700"
+     id="text326">specialized indexes</text>
+  <!-- HNSW -->
+  <rect
+     x="752"
+     y="402"
+     width="110"
+     height="42"
+     rx="4"
+     fill="#292524"
+     stroke="#22d3ee"
+     stroke-width="0.7"
+     id="rect328" />
+  <text
+     x="807"
+     y="416"
+     text-anchor="middle"
+     fill="#22d3ee"
+     font-size="7.5"
+     font-weight="600"
+     id="text330">HNSW Index</text>
+  <text
+     x="807"
+     y="427"
+     text-anchor="middle"
+     fill="#67e8f9"
+     font-size="6.5"
+     id="text332">cosine ops</text>
+  <text
+     x="807"
+     y="438"
+     text-anchor="middle"
+     fill="#67e8f9"
+     font-size="6.5"
+     id="text334">m=16, ef=64</text>
+  <!-- GIN -->
+  <rect
+     x="872"
+     y="402"
+     width="110"
+     height="42"
+     rx="4"
+     fill="#292524"
+     stroke="#f59e0b"
+     stroke-width="0.7"
+     id="rect336" />
+  <text
+     x="927"
+     y="416"
+     text-anchor="middle"
+     fill="#f59e0b"
+     font-size="7.5"
+     font-weight="600"
+     id="text338">GIN Index</text>
+  <text
+     x="927"
+     y="427"
+     text-anchor="middle"
+     fill="#fbbf24"
+     font-size="6.5"
+     id="text340">keywords[] overlap</text>
+  <text
+     x="927"
+     y="438"
+     text-anchor="middle"
+     fill="#fbbf24"
+     font-size="6.5"
+     id="text342">&amp;&amp; operator</text>
+  <!-- tsvector -->
+  <rect
+     x="992"
+     y="402"
+     width="110"
+     height="42"
+     rx="4"
+     fill="#292524"
+     stroke="#a78bfa"
+     stroke-width="0.7"
+     id="rect344" />
+  <text
+     x="1047"
+     y="416"
+     text-anchor="middle"
+     fill="#a78bfa"
+     font-size="7.5"
+     font-weight="600"
+     id="text346">tsvector</text>
+  <text
+     x="1047"
+     y="427"
+     text-anchor="middle"
+     fill="#c4b5fd"
+     font-size="6.5"
+     id="text348">content + summary</text>
+  <text
+     x="1047"
+     y="438"
+     text-anchor="middle"
+     fill="#c4b5fd"
+     font-size="6.5"
+     id="text350">+ hypothetical Qs</text>
+  <!-- ==================== QUERY ENTRY ==================== -->
+  <rect
+     x="80"
+     y="490"
+     width="260"
+     height="42"
+     rx="8"
+     fill="#1e293b"
+     stroke="#334155"
+     stroke-width="1"
+     id="rect352" />
+  <text
+     x="98"
+     y="508"
+     fill="#94a3b8"
+     font-size="8"
+     font-weight="600"
+     letter-spacing="1"
+     id="text354">USER QUERY</text>
+  <text
+     x="98"
+     y="522"
+     fill="#64748b"
+     font-size="7"
+     id="text356">&quot;Compare supervised and unsupervised learning&quot;</text>
+  <line
+     x1="340"
+     y1="511"
+     x2="368"
+     y2="511"
+     stroke="#475569"
+     stroke-width="1.5"
+     marker-end="url(#arrowHead)"
+     id="line358" />
+  <!-- ==================== AGENTIC RAG PIPELINE ==================== -->
+  <rect
+     x="370"
+     y="480"
+     width="760"
+     height="315"
+     rx="10"
+     fill="url(#agentGrad)"
+     stroke="#2d2b55"
+     stroke-width="1"
+     id="rect360" />
+  <text
+     x="388"
+     y="500"
+     fill="#a5b4fc"
+     font-size="8.5"
+     font-weight="700"
+     letter-spacing="1.2"
+     id="text362">AGENTIC RAG PIPELINE</text>
+  <text
+     x="388"
+     y="512"
+     fill="#818cf8"
+     font-size="7"
+     id="text364">LangGraph StateGraph · 6 Nodes · 2 Conditional Edges · RAGState TypedDict flows through all nodes</text>
+  <!-- Node 1: Gatekeeper -->
+  <rect
+     x="388"
+     y="524"
+     width="145"
+     height="68"
+     rx="6"
+     fill="#1e1b4b"
+     stroke="#ef4444"
+     stroke-width="1"
+     id="rect366" />
+  <rect
+     x="388"
+     y="524"
+     width="145"
+     height="15"
+     rx="6"
+     fill="#ef4444"
+     id="rect368" />
+  <rect
+     x="388"
+     y="533"
+     width="145"
+     height="6"
+     rx="0"
+     fill="#1e1b4b"
+     id="rect370" />
+  <text
+     x="393.1315"
+     y="530.13153"
+     fill="#ffffff"
+     font-size="7px"
+     font-weight="700"
+     id="text372">1 · GATEKEEPER</text>
+  <text
+     x="398"
+     y="555"
+     fill="#fca5a5"
+     font-size="7"
+     id="text374">Security classifier (GPT-4o)</text>
+  <text
+     x="398"
+     y="567"
+     fill="#f87171"
+     font-size="6.5"
+     id="text376">Blocks injections &amp; jailbreaks</text>
+  <text
+     x="398"
+     y="579"
+     fill="#f87171"
+     font-size="6.5"
+     id="text378">→ {is_valid, reason}</text>
+  <!-- Reject path -->
+  <line
+     x1="460"
+     y1="592"
+     x2="460"
+     y2="610"
+     stroke="#ef4444"
+     stroke-width="0.8"
+     id="line380" />
+  <rect
+     x="420"
+     y="612"
+     width="80"
+     height="18"
+     rx="4"
+     fill="#450a0a"
+     stroke="#ef4444"
+     stroke-width="0.6"
+     id="rect382" />
+  <text
+     x="460"
+     y="624"
+     text-anchor="middle"
+     fill="#fca5a5"
+     font-size="7"
+     id="text384">Reject query</text>
+  <text
+     x="505"
+     y="608"
+     fill="#ef4444"
+     font-size="6"
+     id="text386">invalid</text>
+  <!-- Valid path -->
+  <line
+     x1="533"
+     y1="558"
+     x2="555"
+     y2="558"
+     stroke="#22c55e"
+     stroke-width="1"
+     marker-end="url(#arrowGreen)"
+     id="line388" />
+  <text
+     x="537"
+     y="552"
+     fill="#22c55e"
+     font-size="6"
+     id="text390">valid</text>
+  <!-- Node 2: Planner -->
+  <rect
+     x="558"
+     y="524"
+     width="145"
+     height="68"
+     rx="6"
+     fill="#1e1b4b"
+     stroke="#6366f1"
+     stroke-width="1"
+     id="rect392" />
+  <rect
+     x="558"
+     y="524"
+     width="145"
+     height="15"
+     rx="6"
+     fill="#6366f1"
+     id="rect394" />
+  <rect
+     x="558"
+     y="533"
+     width="145"
+     height="6"
+     rx="0"
+     fill="#1e1b4b"
+     id="rect396" />
+  <text
+     x="563.13153"
+     y="531.10522"
+     fill="#ffffff"
+     font-size="7px"
+     font-weight="700"
+     id="text398">2 · PLANNER</text>
+  <text
+     x="568"
+     y="555"
+     fill="#a5b4fc"
+     font-size="7"
+     id="text400">Query decomposition</text>
+  <text
+     x="568"
+     y="567"
+     fill="#818cf8"
+     font-size="6.5"
+     id="text402">Complex → sub-queries</text>
+  <text
+     x="568"
+     y="579"
+     fill="#818cf8"
+     font-size="6.5"
+     id="text404">Simple → pass through</text>
+  <line
+     x1="703"
+     y1="558"
+     x2="725"
+     y2="558"
+     stroke="#6366f1"
+     stroke-width="1"
+     marker-end="url(#arrowBlue)"
+     id="line406" />
+  <!-- Node 3: Retriever -->
+  <rect
+     x="728"
+     y="524"
+     width="170"
+     height="68"
+     rx="6"
+     fill="#1e1b4b"
+     stroke="#22d3ee"
+     stroke-width="1"
+     id="rect408" />
+  <rect
+     x="728"
+     y="524"
+     width="170"
+     height="15"
+     rx="6"
+     fill="#0891b2"
+     id="rect410" />
+  <rect
+     x="728"
+     y="533"
+     width="170"
+     height="6"
+     rx="0"
+     fill="#1e1b4b"
+     id="rect412" />
+  <text
+     x="735.07892"
+     y="531.10522"
+     fill="#ffffff"
+     font-size="7px"
+     font-weight="700"
+     id="text414">3 · RETRIEVER</text>
+  <text
+     x="738"
+     y="555"
+     fill="#67e8f9"
+     font-size="7"
+     id="text416">3-way hybrid search per sub-q</text>
+  <text
+     x="738"
+     y="567"
+     fill="#22d3ee"
+     font-size="6.5"
+     id="text418">RRF fusion → LLM rerank</text>
+  <text
+     x="738"
+     y="579"
+     fill="#22d3ee"
+     font-size="6.5"
+     id="text420">Cross-query deduplication</text>
+  <!-- Arrow: Retriever → DB (going up) -->
+  <path
+     d="M813 524 L813 468"
+     stroke="#22d3ee"
+     stroke-width="1"
+     fill="none"
+     marker-end="url(#arrowCyan)"
+     stroke-dasharray="4,2"
+     id="path422" />
+  <text
+     x="820"
+     y="498"
+     fill="#22d3ee"
+     font-size="6.5"
+     id="text424">query</text>
+  <line
+     x1="898"
+     y1="558"
+     x2="920"
+     y2="558"
+     stroke="#22d3ee"
+     stroke-width="1"
+     marker-end="url(#arrowCyan)"
+     id="line426" />
+  <!-- Node 4: Synthesizer -->
+  <rect
+     x="923"
+     y="524"
+     width="190"
+     height="68"
+     rx="6"
+     fill="#1e1b4b"
+     stroke="#8b5cf6"
+     stroke-width="1"
+     id="rect428" />
+  <rect
+     x="923"
+     y="524"
+     width="190"
+     height="15"
+     rx="6"
+     fill="#7c3aed"
+     id="rect430" />
+  <rect
+     x="923"
+     y="533"
+     width="190"
+     height="6"
+     rx="0"
+     fill="#1e1b4b"
+     id="rect432" />
+  <text
+     x="933"
+     y="535"
+     fill="#fff"
+     font-size="7"
+     font-weight="700"
+     id="text434">4 · SYNTHESIZER</text>
+  <text
+     x="933"
+     y="555"
+     fill="#c4b5fd"
+     font-size="7"
+     id="text436">Grounded answer generation</text>
+  <text
+     x="933"
+     y="567"
+     fill="#a78bfa"
+     font-size="6.5"
+     id="text438">Mandatory [Source N] citations</text>
+  <text
+     x="933"
+     y="579"
+     fill="#a78bfa"
+     font-size="6.5"
+     id="text440">Only from retrieved context</text>
+  <!-- Arrow down to Auditor -->
+  <line
+     x1="1018"
+     y1="592"
+     x2="1018"
+     y2="620"
+     stroke="#8b5cf6"
+     stroke-width="1"
+     marker-end="url(#arrowPurple)"
+     id="line442" />
+  <!-- Node 5: Auditor -->
+  <rect
+     x="923"
+     y="623"
+     width="190"
+     height="68"
+     rx="6"
+     fill="#1e1b4b"
+     stroke="#f59e0b"
+     stroke-width="1"
+     id="rect444" />
+  <rect
+     x="923"
+     y="623"
+     width="190"
+     height="15"
+     rx="6"
+     fill="#d97706"
+     id="rect446" />
+  <rect
+     x="923"
+     y="632"
+     width="190"
+     height="6"
+     rx="0"
+     fill="#1e1b4b"
+     id="rect448" />
+  <text
+     x="933"
+     y="631.07892"
+     fill="#ffffff"
+     font-size="7px"
+     font-weight="700"
+     id="text450">5 · AUDITOR</text>
+  <text
+     x="933"
+     y="654"
+     fill="#fbbf24"
+     font-size="7"
+     id="text452">Independent LLM judge</text>
+  <text
+     x="933"
+     y="666"
+     fill="#d97706"
+     font-size="6.5"
+     id="text454">Faithfulness: 0.0–1.0</text>
+  <text
+     x="933"
+     y="678"
+     fill="#d97706"
+     font-size="6.5"
+     id="text456">Relevance: 0.0–1.0</text>
+  <!-- Arrow left to Strategist -->
+  <line
+     x1="923"
+     y1="657"
+     x2="900"
+     y2="657"
+     stroke="#f59e0b"
+     stroke-width="1"
+     marker-end="url(#arrowAmber)"
+     id="line458" />
+  <!-- Node 6: Strategist -->
+  <rect
+     x="700"
+     y="623"
+     width="197"
+     height="68"
+     rx="6"
+     fill="#1e1b4b"
+     stroke="#22c55e"
+     stroke-width="1"
+     id="rect460" />
+  <rect
+     x="700"
+     y="623"
+     width="197"
+     height="15"
+     rx="6"
+     fill="#16a34a"
+     id="rect462" />
+  <rect
+     x="700"
+     y="632"
+     width="197"
+     height="6"
+     rx="0"
+     fill="#1e1b4b"
+     id="rect464" />
+  <text
+     x="709.02631"
+     y="630.10522"
+     fill="#ffffff"
+     font-size="7px"
+     font-weight="700"
+     id="text466">6 · STRATEGIST</text>
+  <text
+     x="710"
+     y="654"
+     fill="#6ee7b7"
+     font-size="7"
+     id="text468">avg = (faith + relev) / 2</text>
+  <text
+     x="710"
+     y="666"
+     fill="#4ade80"
+     font-size="6.5"
+     id="text470">≥ 0.7 → Return answer</text>
+  <text
+     x="710"
+     y="678"
+     fill="#4ade80"
+     font-size="6.5"
+     id="text472">&lt; 0.7 &amp; retries &lt; 2 → Retry</text>
+  <!-- Self-correction retry loop -->
+  <path
+     d="M798 623 L798 608 L813 608 L813 592"
+     stroke="#ef4444"
+     stroke-width="1.2"
+     fill="none"
+     marker-end="url(#arrowRed)"
+     stroke-dasharray="4,2"
+     id="path474" />
+  <rect
+     x="760"
+     y="598"
+     width="48"
+     height="14"
+     rx="3"
+     fill="#450a0a"
+     stroke="#ef4444"
+     stroke-width="0.6"
+     id="rect476" />
+  <text
+     x="784"
+     y="608"
+     text-anchor="middle"
+     fill="#fca5a5"
+     font-size="6.5"
+     font-weight="600"
+     id="text478">RETRY</text>
+  <!-- Output path -->
+  <line
+     x1="700"
+     y1="657"
+     x2="678"
+     y2="657"
+     stroke="#22c55e"
+     stroke-width="1.5"
+     marker-end="url(#arrowGreen)"
+     id="line480" />
+  <!-- Quality pass badge -->
+  <rect
+     x="388"
+     y="641"
+     width="285"
+     height="50"
+     rx="6"
+     fill="#0d2818"
+     stroke="#22c55e"
+     stroke-width="0.8"
+     id="rect482" />
+  <text
+     x="398"
+     y="657"
+     fill="#6ee7b7"
+     font-size="8"
+     font-weight="600"
+     id="text484">RESPONSE OUTPUT</text>
+  <text
+     x="398"
+     y="670"
+     fill="#4ade80"
+     font-size="7"
+     id="text486">Cited answer + audit scores + source locations</text>
+  <text
+     x="398"
+     y="681"
+     fill="#22c55e"
+     font-size="6.5"
+     id="text488">Heading breadcrumbs trace to exact document position</text>
+  <!-- ==================== 3-WAY HYBRID SEARCH DETAIL ==================== -->
+  <rect
+     x="80"
+     y="710"
+     width="520"
+     height="155"
+     rx="10"
+     fill="url(#searchGrad)"
+     stroke="#78716c"
+     stroke-width="1"
+     id="rect490" />
+  <text
+     x="98"
+     y="730"
+     fill="#fbbf24"
+     font-size="8.5"
+     font-weight="700"
+     letter-spacing="1.2"
+     id="text492">3-WAY HYBRID SEARCH</text>
+  <text
+     x="98"
+     y="742"
+     fill="#d97706"
+     font-size="7"
+     id="text494">Parallel execution · Reciprocal Rank Fusion · Weight-configurable</text>
+  <!-- Vector Search -->
+  <rect
+     x="98"
+     y="752"
+     width="150"
+     height="55"
+     rx="5"
+     fill="#1c1508"
+     stroke="#22d3ee"
+     stroke-width="0.8"
+     id="rect496" />
+  <text
+     x="108"
+     y="767"
+     fill="#22d3ee"
+     font-size="8"
+     font-weight="600"
+     id="text498">Vector Similarity</text>
+  <text
+     x="108"
+     y="779"
+     fill="#67e8f9"
+     font-size="6.5"
+     id="text500">Cosine distance via HNSW</text>
+  <text
+     x="108"
+     y="791"
+     fill="#67e8f9"
+     font-size="6.5"
+     id="text502">Semantic matching</text>
+  <rect
+     x="108"
+     y="796"
+     width="35"
+     height="4"
+     rx="2"
+     fill="#22d3ee"
+     opacity="0.6"
+     id="rect504" />
+  <text
+     x="148"
+     y="800"
+     fill="#22d3ee"
+     font-size="6"
+     id="text506">w=0.5</text>
+  <!-- Full-Text Search -->
+  <rect
+     x="258"
+     y="752"
+     width="150"
+     height="55"
+     rx="5"
+     fill="#1c1508"
+     stroke="#a78bfa"
+     stroke-width="0.8"
+     id="rect508" />
+  <text
+     x="268"
+     y="767"
+     fill="#a78bfa"
+     font-size="8"
+     font-weight="600"
+     id="text510">Full-Text Search</text>
+  <text
+     x="268"
+     y="779"
+     fill="#c4b5fd"
+     font-size="6.5"
+     id="text512">tsquery + tsvector (BM25)</text>
+  <text
+     x="268"
+     y="791"
+     fill="#c4b5fd"
+     font-size="6.5"
+     id="text514">Exact term matching</text>
+  <rect
+     x="268"
+     y="796"
+     width="22"
+     height="4"
+     rx="2"
+     fill="#a78bfa"
+     opacity="0.6"
+     id="rect516" />
+  <text
+     x="296"
+     y="800"
+     fill="#a78bfa"
+     font-size="6"
+     id="text518">w=0.3</text>
+  <!-- Keyword Array -->
+  <rect
+     x="418"
+     y="752"
+     width="160"
+     height="55"
+     rx="5"
+     fill="#1c1508"
+     stroke="#f59e0b"
+     stroke-width="0.8"
+     id="rect520" />
+  <text
+     x="428"
+     y="767"
+     fill="#f59e0b"
+     font-size="8"
+     font-weight="600"
+     id="text522">Keyword Array</text>
+  <text
+     x="428"
+     y="779"
+     fill="#fbbf24"
+     font-size="6.5"
+     id="text524">GIN index + &amp;&amp; overlap</text>
+  <text
+     x="428"
+     y="791"
+     fill="#fbbf24"
+     font-size="6.5"
+     id="text526">Domain-specific keywords</text>
+  <rect
+     x="428"
+     y="796"
+     width="14"
+     height="4"
+     rx="2"
+     fill="#f59e0b"
+     opacity="0.6"
+     id="rect528" />
+  <text
+     x="448"
+     y="800"
+     fill="#f59e0b"
+     font-size="6"
+     id="text530">w=0.2</text>
+  <!-- RRF Fusion -->
+  <line
+     x1="173"
+     y1="807"
+     x2="340"
+     y2="830"
+     stroke="#78716c"
+     stroke-width="0.8"
+     id="line532" />
+  <line
+     x1="333"
+     y1="807"
+     x2="340"
+     y2="830"
+     stroke="#78716c"
+     stroke-width="0.8"
+     id="line534" />
+  <line
+     x1="498"
+     y1="807"
+     x2="340"
+     y2="830"
+     stroke="#78716c"
+     stroke-width="0.8"
+     id="line536" />
+  <rect
+     x="258"
+     y="822"
+     width="170"
+     height="32"
+     rx="6"
+     fill="#292524"
+     stroke="#fbbf24"
+     stroke-width="0.8"
+     id="rect538" />
+  <text
+     x="343"
+     y="836"
+     text-anchor="middle"
+     fill="#fbbf24"
+     font-size="8"
+     font-weight="600"
+     id="text540">Reciprocal Rank Fusion</text>
+  <text
+     x="343"
+     y="848"
+     text-anchor="middle"
+     fill="#d97706"
+     font-size="7"
+     id="text542">score = sum( w_i / (60 + rank_i) )</text>
+  <!-- ==================== EVALUATION FRAMEWORK ==================== -->
+  <rect
+     x="620"
+     y="710"
+     width="510"
+     height="155"
+     rx="10"
+     fill="url(#evalGrad)"
+     stroke="#3a2555"
+     stroke-width="1"
+     id="rect544" />
+  <text
+     x="638"
+     y="730"
+     fill="#c4b5fd"
+     font-size="8.5"
+     font-weight="700"
+     letter-spacing="1.2"
+     id="text546">EVALUATION FRAMEWORK</text>
+  <text
+     x="638"
+     y="742"
+     fill="#a78bfa"
+     font-size="7"
+     id="text548">Golden dataset QA pairs · Dual metric categories</text>
+  <!-- Generation Quality -->
+  <rect
+     x="638"
+     y="752"
+     width="220"
+     height="100"
+     rx="6"
+     fill="#1a1520"
+     stroke="#8b5cf6"
+     stroke-width="0.8"
+     id="rect550" />
+  <text
+     x="648"
+     y="767"
+     fill="#c4b5fd"
+     font-size="8"
+     font-weight="600"
+     id="text552">Generation Quality (LLM Judges)</text>
+  <g
+     transform="translate(648, 778)"
+     id="g558">
+    <rect
+       width="10"
+       height="10"
+       rx="2"
+       fill="#22c55e"
+       id="rect554" />
+    <text
+       x="16"
+       y="9"
+       fill="#a78bfa"
+       font-size="7"
+       id="text556">Faithfulness — grounded in context?</text>
+  </g>
+  <g
+     transform="translate(648, 796)"
+     id="g564">
+    <rect
+       width="10"
+       height="10"
+       rx="2"
+       fill="#6366f1"
+       id="rect560" />
+    <text
+       x="16"
+       y="9"
+       fill="#a78bfa"
+       font-size="7"
+       id="text562">Relevance — answers the question?</text>
+  </g>
+  <g
+     transform="translate(648, 814)"
+     id="g570">
+    <rect
+       width="10"
+       height="10"
+       rx="2"
+       fill="#f59e0b"
+       id="rect566" />
+    <text
+       x="16"
+       y="9"
+       fill="#a78bfa"
+       font-size="7"
+       id="text568">Completeness — covers all points?</text>
+  </g>
+  <text
+     x="648"
+     y="843"
+     fill="#6d28d9"
+     font-size="6.5"
+     id="text572">Scored 0.0 – 1.0 per dimension</text>
+  <!-- Retrieval Quality -->
+  <rect
+     x="870"
+     y="752"
+     width="245"
+     height="100"
+     rx="6"
+     fill="#1a1520"
+     stroke="#8b5cf6"
+     stroke-width="0.8"
+     id="rect574" />
+  <text
+     x="880"
+     y="767"
+     fill="#c4b5fd"
+     font-size="8"
+     font-weight="600"
+     id="text576">Retrieval Quality (Computed)</text>
+  <g
+     transform="translate(880, 778)"
+     id="g582">
+    <rect
+       width="10"
+       height="10"
+       rx="2"
+       fill="#22d3ee"
+       id="rect578" />
+    <text
+       x="16"
+       y="9"
+       fill="#a78bfa"
+       font-size="7"
+       id="text580">Precision@K — relevant / retrieved</text>
+  </g>
+  <g
+     transform="translate(880, 796)"
+     id="g588">
+    <rect
+       width="10"
+       height="10"
+       rx="2"
+       fill="#38bdf8"
+       id="rect584" />
+    <text
+       x="16"
+       y="9"
+       fill="#a78bfa"
+       font-size="7"
+       id="text586">Recall@K — found / total relevant</text>
+  </g>
+  <g
+     transform="translate(880, 814)"
+     id="g594">
+    <rect
+       width="10"
+       height="10"
+       rx="2"
+       fill="#818cf8"
+       id="rect590" />
+    <text
+       x="16"
+       y="9"
+       fill="#a78bfa"
+       font-size="7"
+       id="text592">MRR — position of first relevant</text>
+  </g>
+  <g
+     transform="translate(880, 832)"
+     id="g600">
+    <rect
+       width="10"
+       height="10"
+       rx="2"
+       fill="#a78bfa"
+       id="rect596" />
+    <text
+       x="16"
+       y="9"
+       fill="#a78bfa"
+       font-size="7"
+       id="text598">NDCG@K — ranking quality</text>
+  </g>
+  <!-- ==================== KEY DESIGN DECISIONS ==================== -->
+  <rect
+     x="80"
+     y="880"
+     width="1050"
+     height="50"
+     rx="8"
+     fill="#0f172a"
+     stroke="#1e293b"
+     stroke-width="1"
+     id="rect602" />
+  <text
+     x="98"
+     y="898"
+     fill="#64748b"
+     font-size="7.5"
+     font-weight="600"
+     letter-spacing="1"
+     id="text604">KEY DESIGN DECISIONS</text>
+  <g
+     transform="translate(98, 910)"
+     id="g626">
+    <rect
+       width="8"
+       height="8"
+       rx="2"
+       fill="#22c55e"
+       id="rect606" />
+    <text
+       x="14"
+       y="7"
+       fill="#94a3b8"
+       font-size="7.5"
+       id="text608">Single PostgreSQL for everything</text>
+    <rect
+       x="185"
+       width="8"
+       height="8"
+       rx="2"
+       fill="#f59e0b"
+       id="rect610" />
+    <text
+       x="199"
+       y="7"
+       fill="#94a3b8"
+       font-size="7.5"
+       id="text612">3-way hybrid search &gt; vector-only</text>
+    <rect
+       x="380"
+       width="8"
+       height="8"
+       rx="2"
+       fill="#8b5cf6"
+       id="rect614" />
+    <text
+       x="394"
+       y="7"
+       fill="#94a3b8"
+       font-size="7.5"
+       id="text616">Structure preserved end-to-end</text>
+    <rect
+       x="555"
+       width="8"
+       height="8"
+       rx="2"
+       fill="#ef4444"
+       id="rect618" />
+    <text
+       x="569"
+       y="7"
+       fill="#94a3b8"
+       font-size="7.5"
+       id="text620">Self-correction max 2 retries</text>
+    <rect
+       x="720"
+       width="8"
+       height="8"
+       rx="2"
+       fill="#22d3ee"
+       id="rect622" />
+    <text
+       x="734"
+       y="7"
+       fill="#94a3b8"
+       font-size="7.5"
+       id="text624">Async everywhere · Metadata enrichment at ingestion</text>
+  </g>
+  <!-- ==================== LEGEND ==================== -->
+  <rect
+     x="80"
+     y="945"
+     width="1050"
+     height="120"
+     rx="8"
+     fill="#0a0e1a"
+     stroke="#1e293b"
+     stroke-width="0.8"
+     id="rect628" />
+  <text
+     x="98"
+     y="968"
+     fill="#64748b"
+     font-size="7.5"
+     font-weight="600"
+     letter-spacing="1"
+     id="text630">ARCHITECTURE LEGEND</text>
+  <!-- Flow types -->
+  <line
+     x1="98"
+     y1="986"
+     x2="133"
+     y2="986"
+     stroke="#64748b"
+     stroke-width="1.5"
+     marker-end="url(#arrowHead)"
+     id="line632" />
+  <text
+     x="140"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text634">Data flow</text>
+  <line
+     x1="230"
+     y1="986"
+     x2="265"
+     y2="986"
+     stroke="#ef4444"
+     stroke-width="1.2"
+     stroke-dasharray="4,2"
+     marker-end="url(#arrowRed)"
+     id="line636" />
+  <text
+     x="272"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text638">Self-correction retry</text>
+  <line
+     x1="395"
+     y1="986"
+     x2="430"
+     y2="986"
+     stroke="#22d3ee"
+     stroke-width="1"
+     stroke-dasharray="4,2"
+     marker-end="url(#arrowCyan)"
+     id="line640" />
+  <text
+     x="437"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text642">Database query</text>
+  <!-- Node types -->
+  <rect
+     x="555"
+     y="979"
+     width="12"
+     height="12"
+     rx="3"
+     fill="#064e3b"
+     stroke="#10b981"
+     stroke-width="0.8"
+     id="rect644" />
+  <text
+     x="573"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text646">Ingestion step</text>
+  <rect
+     x="665"
+     y="979"
+     width="12"
+     height="12"
+     rx="3"
+     fill="#1e1b4b"
+     stroke="#6366f1"
+     stroke-width="0.8"
+     id="rect648" />
+  <text
+     x="683"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text650">Agent node</text>
+  <rect
+     x="760"
+     y="979"
+     width="12"
+     height="12"
+     rx="3"
+     fill="#1c1508"
+     stroke="#f59e0b"
+     stroke-width="0.8"
+     id="rect652" />
+  <text
+     x="778"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text654">Search / Cache</text>
+  <rect
+     x="865"
+     y="979"
+     width="12"
+     height="12"
+     rx="3"
+     fill="#1a1520"
+     stroke="#8b5cf6"
+     stroke-width="0.8"
+     id="rect656" />
+  <text
+     x="883"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text658">Evaluation</text>
+  <rect
+     x="960"
+     y="979"
+     width="12"
+     height="12"
+     rx="3"
+     fill="#1c1917"
+     stroke="#57534e"
+     stroke-width="0.8"
+     id="rect660" />
+  <text
+     x="978"
+     y="989"
+     fill="#94a3b8"
+     font-size="7.5"
+     id="text662">Database</text>
+  <!-- Vertical flow labels in legend -->
+  <rect
+     x="98"
+     y="1006"
+     width="8"
+     height="36"
+     rx="4"
+     fill="#064e3b"
+     opacity="0.6"
+     id="rect664" />
+  <text
+     x="113"
+     y="1018"
+     fill="#6ee7b7"
+     font-size="7.5"
+     font-weight="600"
+     id="text666">Ingestion Flow (left bar)</text>
+  <text
+     x="113"
+     y="1032"
+     fill="#4ade80"
+     font-size="7"
+     id="text668">Documents → Parse → Chunk → Embed → Enrich → Store in PostgreSQL</text>
+  <rect
+     x="470"
+     y="1006"
+     width="8"
+     height="36"
+     rx="4"
+     fill="#312e81"
+     opacity="0.6"
+     id="rect670" />
+  <text
+     x="485"
+     y="1018"
+     fill="#a5b4fc"
+     font-size="7.5"
+     font-weight="600"
+     id="text672">Query Flow (left bar)</text>
+  <text
+     x="485"
+     y="1032"
+     fill="#818cf8"
+     font-size="7"
+     id="text674">User Query → Gatekeeper → Planner → Retriever → Synthesizer → Auditor → Strategist → Response</text>
+  <!-- Tech stack -->
+  <text
+     x="98"
+     y="1058"
+     fill="#475569"
+     font-size="7"
+     id="text676">Python · FastAPI · LangGraph · PostgreSQL 16 + pgvector · OpenAI (GPT-4o + text-embedding-3-small) · Docling · Async I/O</text>
+</svg>
