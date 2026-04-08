@@ -24,14 +24,14 @@ export async function fetchBlogPosts(): Promise<{
   posts: BlogPost[];
   tags: string[];
 }> {
-  const res = await fetch(`${API_URL}/blog`, { next: { revalidate: 3600 } });
+  const res = await fetch(`${API_URL}/blog`, { next: { revalidate: 60 } });
   if (!res.ok) throw new Error("Failed to fetch posts");
   return res.json();
 }
 
 export async function fetchBlogPost(slug: string): Promise<BlogPostFull | null> {
   const res = await fetch(`${API_URL}/blog/${slug}`, {
-    next: { revalidate: 3600 },
+    next: { revalidate: 60 },
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Failed to fetch post");
