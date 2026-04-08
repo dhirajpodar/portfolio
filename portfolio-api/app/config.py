@@ -6,6 +6,14 @@ class Settings(BaseSettings):
     MODEL_NAME: str = "llama-3.3-70b-versatile"
     CORS_ORIGINS: str = "*"
 
+    # Email notifications
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 465
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    NOTIFY_EMAIL: str = ""
+    EMAIL_NOTIFICATIONS_ENABLED: bool = False
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 
