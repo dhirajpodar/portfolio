@@ -18,8 +18,10 @@ export default function Hero() {
     if (!isDeleting && displayText === currentTitle) {
       timeout = setTimeout(() => setIsDeleting(true), 2000);
     } else if (isDeleting && displayText === "") {
-      setIsDeleting(false);
-      setTitleIndex((prev) => (prev + 1) % HERO_TITLES.length);
+      timeout = setTimeout(() => {
+        setIsDeleting(false);
+        setTitleIndex((prev) => (prev + 1) % HERO_TITLES.length);
+      }, 0);
     } else {
       timeout = setTimeout(
         () => {

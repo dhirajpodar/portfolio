@@ -14,8 +14,8 @@ function AnimatedNumber({ value, inView }: { value: string; inView: boolean }) {
     if (!inView) return;
     const target = parseInt(numericPart, 10);
     if (isNaN(target)) {
-      setDisplay(value);
-      return;
+      const id = setTimeout(() => setDisplay(value), 0);
+      return () => clearTimeout(id);
     }
 
     let current = 0;
