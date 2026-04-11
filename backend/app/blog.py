@@ -22,11 +22,16 @@ def extract_headings(markdown: str) -> list[dict]:
     return headings
 
 
+REQUIRED_FIELDS = ("title", "excerpt", "tags", "date", "readTime")
+
+
 def load_post(slug: str) -> dict | None:
     path = CONTENT_DIR / f"{slug}.md"
     if not path.exists():
         return None
     post = frontmatter.load(str(path))
+    if not all(f in post.metadata for f in REQUIRED_FIELDS):
+        return None
     return {
         "slug": slug,
         "title": post.metadata["title"],
@@ -44,6 +49,8 @@ def load_all_posts() -> list[dict]:
     for path in CONTENT_DIR.glob("*.md"):
         slug = path.stem
         post = frontmatter.load(str(path))
+        if not all(f in post.metadata for f in REQUIRED_FIELDS):
+            continue
         posts.append({
             "slug": slug,
             "title": post.metadata["title"],

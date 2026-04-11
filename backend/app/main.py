@@ -46,7 +46,7 @@ origins = (
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=settings.CORS_ORIGINS != "*",
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -176,12 +176,18 @@ async def stream_response(message: str, thread_id: str):
 
     for attempt in range(max_retries + 1):
         try:
-            async for kind, data in _stream_agent(input_message, config, thread_id):
-                if kind == "event":
-                    yield f"data: {data}\n\n"
-                elif kind == "content":
-                    full_content = data
+            async with asyncio.timeout(60):
+                async for kind, data in _stream_agent(input_message, config, thread_id):
+                    if kind == "event":
+                        yield f"data: {data}\n\n"
+                    elif kind == "content":
+                        full_content = data
             break  # success, exit retry loop
+
+        except TimeoutError:
+            logger.error(f"[{thread_id[:8]}] Agent stream timed out after 60s")
+            yield f"data: {json.dumps({'type': 'error', 'error': 'Response timed out. Please try again.', 'thread_id': thread_id})}\n\n"
+            break
 
         except Exception as e:
             error_str = str(e).lower()
@@ -190,7 +196,7 @@ async def stream_response(message: str, thread_id: str):
             if is_rate_limit and attempt < max_retries:
                 wait = (attempt + 1) * 5  # 5s, 10s
                 logger.warning(f"[{thread_id[:8]}] Rate limit (attempt {attempt + 1}/{max_retries}), retrying in {wait}s")
-                yield f"data: {json.dumps({'type': 'content', 'content': chr(10) + chr(10) + '*One moment, gathering my thoughts...*' + chr(10) + chr(10), 'thread_id': thread_id})}\n\n"
+                yield f"data: {json.dumps({'type': 'content', 'content': '\n\n*One moment, gathering my thoughts...*\n\n', 'thread_id': thread_id})}\n\n"
                 await asyncio.sleep(wait)
                 continue
 
