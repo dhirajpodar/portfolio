@@ -44,3 +44,4 @@ docker compose up --build
 - Never add `litellm` or `pyyaml` to `pyproject.toml`
 - Rebuild PageIndex indexes: `cd backend && python3 scripts/build_index.py`
 - Model for ChatGroq: WITHOUT `groq/` prefix. Model for LiteLLM: WITH `groq/` prefix
+- Do not include "Generated with Claude Code" or any Claude Code references in commit messages or PR descriptions
