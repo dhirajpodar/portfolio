@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import asynccontextmanager
 import json
 import logging
 import re
@@ -8,6 +9,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+import pydantic
 from pydantic import BaseModel
 
 from app.config import settings
@@ -19,7 +21,21 @@ from app import pageindex_store
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Portfolio API")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    doc_count = len(pageindex_store.get_all_documents())
+    if doc_count == 0:
+        logger.warning(
+            "No PageIndex documents found. Run 'python scripts/build_index.py' to generate indexes."
+        )
+    else:
+        logger.info(f"PageIndex: {doc_count} documents loaded")
+    logger.info("Portfolio API started")
+    yield
+
+
+app = FastAPI(title="Portfolio API", lifespan=lifespan)
 
 origins = (
     settings.CORS_ORIGINS.split(",")
@@ -37,20 +53,8 @@ app.add_middleware(
 
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = pydantic.Field(max_length=2000)
     thread_id: str | None = None
-
-
-@app.on_event("startup")
-async def startup():
-    doc_count = len(pageindex_store.get_all_documents())
-    if doc_count == 0:
-        logger.warning(
-            "No PageIndex documents found. Run 'python scripts/build_index.py' to generate indexes."
-        )
-    else:
-        logger.info(f"PageIndex: {doc_count} documents loaded")
-    logger.info("Portfolio API started")
 
 
 SUGGESTED_QUESTIONS = [
@@ -161,7 +165,7 @@ async def stream_response(message: str, thread_id: str):
                 continue
 
             logger.error(f"Streaming error: {e}")
-            yield f"data: {json.dumps({'type': 'error', 'error': str(e), 'thread_id': thread_id})}\n\n"
+            yield f"data: {json.dumps({'type': 'error', 'error': 'Something went wrong. Please try again.', 'thread_id': thread_id})}\n\n"
             break
 
     _, followups = extract_followups(full_content)

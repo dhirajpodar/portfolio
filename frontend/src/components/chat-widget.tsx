@@ -101,15 +101,17 @@ export default function ChatWidget() {
 
           try {
             const data = JSON.parse(trimmed.slice(6));
-            if (data.done) continue;
-            if (data.content) {
+            if (data.type === "done") continue;
+            if (data.type === "content" && data.content) {
               setMessages((prev) => {
                 const updated = [...prev];
                 const last = updated[updated.length - 1];
                 if (last && last.role === "assistant") {
                   updated[updated.length - 1] = {
                     ...last,
-                    content: last.content + data.content,
+                    content: (last.content + data.content)
+                      .replace(/<!--\s*followups:\s*\[.*?\]\s*-->/gs, "")
+                      .trimEnd(),
                   };
                 }
                 return updated;

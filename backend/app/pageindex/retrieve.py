@@ -6,12 +6,12 @@ No external dependencies — works with pre-built JSON trees only.
 import json
 
 
-def _remove_fields(data, fields=("text",)):
+def remove_fields(data, fields=("text",)):
     """Recursively remove specified fields from nested dicts/lists."""
     if isinstance(data, dict):
-        return {k: _remove_fields(v, fields) for k, v in data.items() if k not in fields}
+        return {k: remove_fields(v, fields) for k, v in data.items() if k not in fields}
     elif isinstance(data, list):
-        return [_remove_fields(item, fields) for item in data]
+        return [remove_fields(item, fields) for item in data]
     return data
 
 
@@ -77,7 +77,7 @@ def get_document_structure(documents: dict, doc_id: str) -> str:
     if not doc_info:
         return json.dumps({"error": f"Document {doc_id} not found"})
     structure = doc_info.get("structure", [])
-    return json.dumps(_remove_fields(structure, fields=("text",)), ensure_ascii=False)
+    return json.dumps(remove_fields(structure, fields=("text",)), ensure_ascii=False)
 
 
 def get_page_content(documents: dict, doc_id: str, pages: str) -> str:

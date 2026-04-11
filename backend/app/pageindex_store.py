@@ -14,7 +14,7 @@ from app.pageindex.retrieve import (
     get_document as _get_document,
     get_document_structure as _get_document_structure,
     get_page_content as _get_page_content,
-    _remove_fields,
+    remove_fields,
 )
 
 logger = logging.getLogger(__name__)
@@ -91,4 +91,4 @@ def get_tree_without_text(doc_id: str) -> list:
     doc_info = _documents.get(doc_id)
     if not doc_info:
         return []
-    return _remove_fields(doc_info.get("structure", []), fields=("text",))
+    return remove_fields(doc_info.get("structure", []), fields=("text",))
