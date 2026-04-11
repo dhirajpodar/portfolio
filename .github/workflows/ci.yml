@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: portfolio
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: portfolio/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - run: npm ci
       - run: npm run lint
@@ -31,16 +31,16 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: portfolio-api
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
-      - run: pip install poetry
-      - run: poetry install --no-root
-      - run: poetry run python -c "from app.agent import agent; print('agent OK')"
+      - run: pip install -r requirements.txt
+      - run: python -c "from app.agent import agent; print('agent OK')"
         env:
           GROQ_API_KEY: dummy-key-for-ci
+          GEMINI_API_KEY: dummy-key-for-ci

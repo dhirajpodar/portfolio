@@ -3,7 +3,8 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
-    MODEL_NAME: str = "llama-3.3-70b-versatile"
+    GEMINI_API_KEY: str = ""
+    MODEL_NAME: str = "gemini-2.5-flash-lite"
     CORS_ORIGINS: str = "*"
 
     # Email notifications

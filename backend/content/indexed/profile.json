@@ -1,0 +1,201 @@
+{
+  "doc_name": "profile",
+  "doc_description": "This document is the resume of Dhiraj Poddar, a full stack AI engineer with 4+ years of experience in backend engineering, AI/ML systems, and cloud-native deployment, showcasing his professional summary, work experience, projects, skills, education, and contact information.",
+  "line_count": 115,
+  "structure": [
+    {
+      "title": "Dhiraj Poddar - Full Stack AI Engineer",
+      "node_id": "0000",
+      "line_num": 1,
+      "text": "# Dhiraj Poddar - Full Stack AI Engineer",
+      "nodes": [
+        {
+          "title": "Professional Summary",
+          "node_id": "0001",
+          "line_num": 3,
+          "text": "## Professional Summary\n\nAI Software Engineer who builds production AI platforms — from LangGraph agent orchestration and RAG pipelines to cloud-native deployment on Azure. 4+ years across backend engineering, AI/ML systems, and cloud-native deployment. Core engineer on a production SaaS platform with agentic AI workflows. First employee at Maindtec AI startup.",
+          "summary": "## Professional Summary\n\nAI Software Engineer who builds production AI platforms — from LangGraph agent orchestration and RAG pipelines to cloud-native deployment on Azure. 4+ years across backend engineering, AI/ML systems, and cloud-native deployment. Core engineer on a production SaaS platform with agentic AI workflows. First employee at Maindtec AI startup."
+        },
+        {
+          "title": "Work Experience",
+          "node_id": "0002",
+          "line_num": 7,
+          "text": "## Work Experience",
+          "nodes": [
+            {
+              "title": "Maindtec - Agentic AI Engineer (Jan 2025-Present)",
+              "node_id": "0003",
+              "line_num": 9,
+              "text": "### Maindtec - Agentic AI Engineer (Jan 2025-Present)\n\n- Core team building MAiQ, an AI SaaS platform: FastAPI modular monolith (DDD), LangGraph agent orchestration with autonomous tool-calling, and Azure cloud infrastructure with Bicep IaC\n- Implemented hybrid RAG pipeline — BM25 full-text + pgvector semantic search + Cohere reranking\n- Led and delivered a production AI agent end-to-end in 3 months for an external customer\n- Built GPU-accelerated 2D technical drawing analysis with YOLO object detection, Transformer OCR, and GPT vision on AKS\n- Implemented multi-tenant RBAC with SSO (OIDC/SAML) and JWT-based stateless session management\n- Built production observability with Application Insights, Prometheus, LangSmith, PostHog\n- First employee at the startup",
+              "summary": "### Maindtec - Agentic AI Engineer (Jan 2025-Present)\n\n- Core team building MAiQ, an AI SaaS platform: FastAPI modular monolith (DDD), LangGraph agent orchestration with autonomous tool-calling, and Azure cloud infrastructure with Bicep IaC\n- Implemented hybrid RAG pipeline — BM25 full-text + pgvector semantic search + Cohere reranking\n- Led and delivered a production AI agent end-to-end in 3 months for an external customer\n- Built GPU-accelerated 2D technical drawing analysis with YOLO object detection, Transformer OCR, and GPT vision on AKS\n- Implemented multi-tenant RBAC with SSO (OIDC/SAML) and JWT-based stateless session management\n- Built production observability with Application Insights, Prometheus, LangSmith, PostHog\n- First employee at the startup"
+            },
+            {
+              "title": "Siemens AG - Working Student AI Engineer (Sep 2024-Dec 2024)",
+              "node_id": "0004",
+              "line_num": 19,
+              "text": "### Siemens AG - Working Student AI Engineer (Sep 2024-Dec 2024)\n\n- Developed and implemented various time series forecasting models and evaluated their performance\n- Assessed model robustness by applying perturbation methods such as Brownian, Gaussian noise, rotation, etc.\n- Implemented a dashboard application for the demonstration of model performance",
+              "summary": "### Siemens AG - Working Student AI Engineer (Sep 2024-Dec 2024)\n\n- Developed and implemented various time series forecasting models and evaluated their performance\n- Assessed model robustness by applying perturbation methods such as Brownian, Gaussian noise, rotation, etc.\n- Implemented a dashboard application for the demonstration of model performance"
+            },
+            {
+              "title": "Siemens AG - Master Thesis Student (Mar 2024-Aug 2024)",
+              "node_id": "0005",
+              "line_num": 25,
+              "text": "### Siemens AG - Master Thesis Student (Mar 2024-Aug 2024)\n\n- Topic: Robustness of Large Language Models\n- Integrated various open source NLP models from Hugging Face for machine translation, paraphrasing and tokenization\n- Implemented text data augmentation methods: synonym replacement, backtranslation, paraphrasing\n- Investigated evaluation metrics BERTScore, BLEURT, BARTScore on open source QA datasets\n- Implemented RAG pipeline to extract information for Siemens dataset\n- Libraries: PyTorch, transformers, NLTK, open source data augmentation libraries",
+              "summary": "### Siemens AG - Master Thesis Student (Mar 2024-Aug 2024)\n\n- Topic: Robustness of Large Language Models\n- Integrated various open source NLP models from Hugging Face for machine translation, paraphrasing and tokenization\n- Implemented text data augmentation methods: synonym replacement, backtranslation, paraphrasing\n- Investigated evaluation metrics BERTScore, BLEURT, BARTScore on open source QA datasets\n- Implemented RAG pipeline to extract information for Siemens dataset\n- Libraries: PyTorch, transformers, NLTK, open source data augmentation libraries"
+            },
+            {
+              "title": "Siemens AG - Working Student Data Scientist (Feb 2023-Feb 2024)",
+              "node_id": "0006",
+              "line_num": 34,
+              "text": "### Siemens AG - Working Student Data Scientist (Feb 2023-Feb 2024)\n\n- Implemented and integrated AI models using TensorFlow and PyTorch, leading to 20% increase in prediction accuracy for PCB board soldering defect classification\n- Maintained and deployed ML models using Siemens deployment infrastructures (AI inference server, AI monitor)",
+              "summary": "### Siemens AG - Working Student Data Scientist (Feb 2023-Feb 2024)\n\n- Implemented and integrated AI models using TensorFlow and PyTorch, leading to 20% increase in prediction accuracy for PCB board soldering defect classification\n- Maintained and deployed ML models using Siemens deployment infrastructures (AI inference server, AI monitor)"
+            },
+            {
+              "title": "Citytech - Software Developer (Apr 2019-Oct 2020)",
+              "node_id": "0007",
+              "line_num": 39,
+              "text": "### Citytech - Software Developer (Apr 2019-Oct 2020)\n\n- Fintech POS apps for 5+ banks",
+              "summary": "### Citytech - Software Developer (Apr 2019-Oct 2020)\n\n- Fintech POS apps for 5+ banks"
+            }
+          ],
+          "prefix_summary": "## Work Experience"
+        },
+        {
+          "title": "Projects",
+          "node_id": "0008",
+          "line_num": 43,
+          "text": "## Projects",
+          "nodes": [
+            {
+              "title": "CNN-Generated Image Detection (FAU, Nov 2022-Mar 2023)",
+              "node_id": "0009",
+              "line_num": 45,
+              "text": "### CNN-Generated Image Detection (FAU, Nov 2022-Mar 2023)\n\nUniversal detector to distinguish real vs CNN-generated images from 11 different generator models. Reproduced results from S. Wang et al. paper. Used ResNet50 and GoogleNet trained on ImageNet with PyTorch. Evaluated with Accuracy and Average Precision metrics.",
+              "summary": "### CNN-Generated Image Detection (FAU, Nov 2022-Mar 2023)\n\nUniversal detector to distinguish real vs CNN-generated images from 11 different generator models. Reproduced results from S. Wang et al. paper. Used ResNet50 and GoogleNet trained on ImageNet with PyTorch. Evaluated with Accuracy and Average Precision metrics."
+            },
+            {
+              "title": "Dynamic Form Library (Citytech, Oct 2019-Feb 2020)",
+              "node_id": "0010",
+              "line_num": 49,
+              "text": "### Dynamic Form Library (Citytech, Oct 2019-Feb 2020)\n\nLibrary to generate dynamic forms from JSON via API at runtime. Single-screen and multi-screen forms (ViewPager). Custom layouts for TextView, EditText, Checkbox, RadioButtons, Image, Map, Signature fields. Observer pattern with EventBus.",
+              "summary": "### Dynamic Form Library (Citytech, Oct 2019-Feb 2020)\n\nLibrary to generate dynamic forms from JSON via API at runtime. Single-screen and multi-screen forms (ViewPager). Custom layouts for TextView, EditText, Checkbox, RadioButtons, Image, Map, Signature fields. Observer pattern with EventBus."
+            },
+            {
+              "title": "MLOps End-to-End",
+              "node_id": "0011",
+              "line_num": 53,
+              "text": "### MLOps End-to-End\n\nGemstone price prediction using LinearRegression, Ridge, Lasso, RandomForest — 98% accuracy. Full MLOps: scikit-learn, Docker, MLflow, Airflow, DVC, CI/CD, GitHub, DagsHub, Azure.",
+              "summary": "### MLOps End-to-End\n\nGemstone price prediction using LinearRegression, Ridge, Lasso, RandomForest — 98% accuracy. Full MLOps: scikit-learn, Docker, MLflow, Airflow, DVC, CI/CD, GitHub, DagsHub, Azure."
+            },
+            {
+              "title": "Dimensionality Reduction using Deep Learning (MANIT)",
+              "node_id": "0012",
+              "line_num": 57,
+              "text": "### Dimensionality Reduction using Deep Learning (MANIT)\n\nAutoencoder models for Big Data dimensionality reduction. Combined t-SNE with autoencoder to minimize reconstruction loss.",
+              "summary": "### Dimensionality Reduction using Deep Learning (MANIT)\n\nAutoencoder models for Big Data dimensionality reduction. Combined t-SNE with autoencoder to minimize reconstruction loss."
+            },
+            {
+              "title": "Wind Energy Forecasting (MANIT)",
+              "node_id": "0013",
+              "line_num": 61,
+              "text": "### Wind Energy Forecasting (MANIT)\n\nARIMA modeling of long time series in MATLAB. Autocorrelation and non-stationarity detection in pre-whitened time series.",
+              "summary": "### Wind Energy Forecasting (MANIT)\n\nARIMA modeling of long time series in MATLAB. Autocorrelation and non-stationarity detection in pre-whitened time series."
+            },
+            {
+              "title": "Cracked Windows Image Recognition (FAU, Jun-Jul 2022)",
+              "node_id": "0014",
+              "line_num": 65,
+              "text": "### Cracked Windows Image Recognition (FAU, Jun-Jul 2022)\n\nClassification of cracked window images using PyTorch/CNN. F-Score 0.65.",
+              "summary": "### Cracked Windows Image Recognition (FAU, Jun-Jul 2022)\n\nClassification of cracked window images using PyTorch/CNN. F-Score 0.65."
+            }
+          ],
+          "prefix_summary": "## Projects"
+        },
+        {
+          "title": "Skills",
+          "node_id": "0015",
+          "line_num": 69,
+          "text": "## Skills",
+          "nodes": [
+            {
+              "title": "AI and Machine Learning",
+              "node_id": "0016",
+              "line_num": 71,
+              "text": "### AI and Machine Learning\n\nLangGraph, LangChain, LangSmith, RAG, pgvector, Cohere, PyTorch, YOLO, Transformers, OpenCV, Multi-Agent Systems",
+              "summary": "### AI and Machine Learning\n\nLangGraph, LangChain, LangSmith, RAG, pgvector, Cohere, PyTorch, YOLO, Transformers, OpenCV, Multi-Agent Systems"
+            },
+            {
+              "title": "Backend Development",
+              "node_id": "0017",
+              "line_num": 75,
+              "text": "### Backend Development\n\nPython, FastAPI, SQLAlchemy, Pydantic, Redis, Celery, Alembic",
+              "summary": "### Backend Development\n\nPython, FastAPI, SQLAlchemy, Pydantic, Redis, Celery, Alembic"
+            },
+            {
+              "title": "Cloud and DevOps",
+              "node_id": "0018",
+              "line_num": 79,
+              "text": "### Cloud and DevOps\n\nAzure (Container Apps, AKS, OpenAI, Key Vault, VNet), Docker, Bicep IaC, GitHub Actions, KEDA, Prometheus",
+              "summary": "### Cloud and DevOps\n\nAzure (Container Apps, AKS, OpenAI, Key Vault, VNet), Docker, Bicep IaC, GitHub Actions, KEDA, Prometheus"
+            },
+            {
+              "title": "Frontend",
+              "node_id": "0019",
+              "line_num": 83,
+              "text": "### Frontend\n\nTypeScript, Next.js, React, Redux, TailwindCSS, Framer Motion",
+              "summary": "### Frontend\n\nTypeScript, Next.js, React, Redux, TailwindCSS, Framer Motion"
+            },
+            {
+              "title": "Databases",
+              "node_id": "0020",
+              "line_num": 87,
+              "text": "### Databases\n\nPostgreSQL, Redis, pgvector",
+              "summary": "### Databases\n\nPostgreSQL, Redis, pgvector"
+            }
+          ],
+          "prefix_summary": "## Skills"
+        },
+        {
+          "title": "Education",
+          "node_id": "0021",
+          "line_num": 91,
+          "text": "## Education",
+          "nodes": [
+            {
+              "title": "MSc Data Science - FAU Erlangen-Nurnberg (2021-2024)",
+              "node_id": "0022",
+              "line_num": 93,
+              "text": "### MSc Data Science - FAU Erlangen-Nurnberg (2021-2024)\n\nFriedrich-Alexander-Universitat Erlangen-Nurnberg (FAU)",
+              "summary": "### MSc Data Science - FAU Erlangen-Nurnberg (2021-2024)\n\nFriedrich-Alexander-Universitat Erlangen-Nurnberg (FAU)"
+            },
+            {
+              "title": "BTech Computer Science - MANIT Bhopal (2014-2018)",
+              "node_id": "0023",
+              "line_num": 97,
+              "text": "### BTech Computer Science - MANIT Bhopal (2014-2018)\n\nMaulana Azad National Institute of Technology (MANIT) Bhopal",
+              "summary": "### BTech Computer Science - MANIT Bhopal (2014-2018)\n\nMaulana Azad National Institute of Technology (MANIT) Bhopal"
+            }
+          ],
+          "prefix_summary": "## Education"
+        },
+        {
+          "title": "Beyond Work",
+          "node_id": "0024",
+          "line_num": 101,
+          "text": "## Beyond Work\n\n- Passionate problem-solver — genuinely enjoys breaking down complex challenges and finding elegant solutions\n- Constant learner — always picking up new frameworks, research papers, or different domains\n- Builder at heart — loves shipping things, taking ideas from zero to working product\n- Enthusiastic about engineering — it's not just a job, it's what he looks forward to every day\n- Art of Living Foundation volunteer — contributes to community well-being and personal development initiatives",
+          "summary": "## Beyond Work\n\n- Passionate problem-solver — genuinely enjoys breaking down complex challenges and finding elegant solutions\n- Constant learner — always picking up new frameworks, research papers, or different domains\n- Builder at heart — loves shipping things, taking ideas from zero to working product\n- Enthusiastic about engineering — it's not just a job, it's what he looks forward to every day\n- Art of Living Foundation volunteer — contributes to community well-being and personal development initiatives"
+        },
+        {
+          "title": "Contact",
+          "node_id": "0025",
+          "line_num": 109,
+          "text": "## Contact\n\n- Email: dhirajpoddar@outlook.com\n- LinkedIn: linkedin.com/in/dhiraj-poddar/\n- GitHub: github.com/dhirajpodar\n- Location: Ingolstadt, Germany",
+          "summary": "## Contact\n\n- Email: dhirajpoddar@outlook.com\n- LinkedIn: linkedin.com/in/dhiraj-poddar/\n- GitHub: github.com/dhirajpodar\n- Location: Ingolstadt, Germany"
+        }
+      ],
+      "prefix_summary": "# Dhiraj Poddar - Full Stack AI Engineer"
+    }
+  ],
+  "type": "markdown",
+  "doc_id": "profile"
+}
