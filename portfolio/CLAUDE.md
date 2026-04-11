@@ -1,35 +1,46 @@
-# Project Guidelines
+# Portfolio Project
+
+AI-powered portfolio website with an agentic chat assistant using reasoning-based tree-search retrieval (PageIndex).
 
 ## Structure
 
-- `frontend/` -- Next.js app (see `frontend/AGENTS.md` for Next.js-specific rules)
-- `backend/` -- FastAPI + LangGraph agent with PageIndex integration
+```
+portfolio/
+├── frontend/          Next.js 16, React 19, TailwindCSS, Framer Motion
+├── backend/           FastAPI, LangGraph, Groq (Kimi K2), PageIndex
+└── docker-compose.yml
+```
 
-## Backend
+See `frontend/CLAUDE.md` and `backend/CLAUDE.md` for detailed guidelines.
 
-- **Framework:** FastAPI with SSE streaming
-- **Agent:** LangGraph ReAct agent with 10 tools (7 fast-path + 3 PageIndex deep-search)
-- **LLM:** Groq Kimi K2 (`moonshotai/kimi-k2-instruct`) via `langchain-groq`
-- **Retrieval:** Hybrid -- hardcoded profile tools for quick facts, PageIndex tree-search for blog deep-dives
-- **Runtime deps:** stdlib only for PageIndex (no litellm/yaml at runtime). `litellm` + `pyyaml` are build-time only (in `scripts/`)
+## Quick Start
 
-### Key files
+```bash
+# Backend
+cd backend
+cp .env.example .env   # add GROQ_API_KEY
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 
-- `backend/app/agent.py` -- agent tools + system prompt
-- `backend/app/main.py` -- FastAPI endpoints + SSE streaming with rate limit retry
-- `backend/app/pageindex_store.py` -- loads pre-built JSON trees at startup
-- `backend/app/pageindex/retrieve.py` -- runtime retrieval (stdlib only)
-- `backend/scripts/build_index.py` -- offline indexing via Groq/LiteLLM
+# Frontend
+cd frontend
+npm install
+npm run dev
 
-### Rules
+# Docker
+docker compose up --build
+```
 
-- Never add `litellm` or `pyyaml` to `pyproject.toml` -- they are build-time only
-- Pre-built JSON indexes live in `backend/content/indexed/` -- regenerate with `scripts/build_index.py`
-- `app/pageindex/` is runtime code (zero external deps). `scripts/` is build-time code (needs litellm)
-- Model for ChatGroq: use name WITHOUT `groq/` prefix. Model for LiteLLM: use WITH `groq/` prefix
-- Rate limit handling: ChatGroq has `max_retries=3`, SSE stream retries with backoff on 429
+## Architecture
 
-## Frontend
+- **Chat:** Frontend sends messages to `POST /chat`, backend streams SSE events (thinking, tool calls, content tokens, follow-ups)
+- **Agent:** LangGraph ReAct agent with hybrid retrieval -- 7 fast-path tools (instant profile lookups) + 3 PageIndex tools (reasoning-based blog deep-search)
+- **PageIndex:** Documents indexed into hierarchical trees at build time. Agent navigates trees by reading summaries, then fetches only relevant sections. No vector DB.
+- **Blog:** Markdown posts with YAML frontmatter in `backend/content/posts/`, served via `/blog` API
 
-- See `frontend/AGENTS.md` for Next.js version-specific rules
-- API base URL configured in `frontend/src/lib/constants.ts`
+## Key Rules
+
+- `backend/app/pageindex/` has zero external deps at runtime. `litellm`/`pyyaml` are build-time only (`backend/scripts/`)
+- Never add `litellm` or `pyyaml` to `pyproject.toml`
+- Rebuild PageIndex indexes: `cd backend && python3 scripts/build_index.py`
+- Model for ChatGroq: WITHOUT `groq/` prefix. Model for LiteLLM: WITH `groq/` prefix
