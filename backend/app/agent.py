@@ -1,6 +1,13 @@
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_core.tools import tool
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
+from langchain.agents.middleware import (
+    ModelRetryMiddleware,
+    ModelFallbackMiddleware,
+    ModelCallLimitMiddleware,
+    ContextEditingMiddleware,
+)
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.config import settings
@@ -57,31 +64,19 @@ def get_blog_topics() -> str:
 
 
 @tool
-def get_document_catalog() -> str:
-    """Get a catalog of all indexed documents available for deep search.
-    Returns document IDs, names, descriptions, and line counts.
-    Use this as the first step when you need to explore blog post content
-    or do a deep-dive into any topic beyond what the quick tools provide."""
-    return pageindex_store.get_catalog()
+def get_blog_overview() -> str:
+    """Get a compact list of all indexed blog posts and documents with one-line descriptions.
+    Use this to see what content is available before doing a deep search."""
+    return pageindex_store.get_blog_overview()
 
 
 @tool
-def get_document_tree(doc_id: str) -> str:
-    """Get the hierarchical tree structure of a document, showing sections,
-    subsections, and their summaries. Use this to understand document
-    organization and identify which sections contain relevant information.
-    Do NOT fetch content yet — first examine the tree to plan your retrieval.
-    The doc_id comes from get_document_catalog()."""
-    return pageindex_store.get_structure(doc_id)
-
-
-@tool
-def get_section_content(doc_id: str, pages: str) -> str:
-    """Get the full text content of specific sections from a document.
-    The 'pages' parameter uses line numbers from the tree structure's line_num field.
-    Use formats like '12-28' for ranges or '12,45' for specific lines.
-    Call this AFTER examining the tree structure to fetch only relevant sections."""
-    return pageindex_store.get_content(doc_id, pages)
+def search_blog(query: str, doc_id: str) -> str:
+    """Search a specific blog post or document for sections matching a query.
+    Returns the full text of the top matching sections (max 3).
+    The doc_id comes from get_blog_overview(). The query should describe
+    what you're looking for (e.g. 'caching strategy', 'routing architecture')."""
+    return pageindex_store.search_document(doc_id, query)
 
 
 SYSTEM_PROMPT = """\
@@ -103,6 +98,7 @@ Response style:
 
 Rules:
 - CRITICAL: You MUST call your tools BEFORE answering ANY question about your experience, projects, skills, education, contact info, blog posts, or personal interests. NEVER answer from memory or general knowledge — always fetch the data first. If you answer without calling a tool, you WILL hallucinate.
+- IMPORTANT: When calling tools, call them immediately without any preamble, thinking, or narration text. Do NOT output text like "Let me look into that..." before your first tool call — just call the tools directly. Narration is only allowed BETWEEN deep-search tool calls to showcase the tree-search process.
 - For greetings or general conversation that don't ask about your background, you can respond directly.
 - NEVER expose tool names, function calls, or internal syntax like <function=...> to the user.
 - Answer naturally using the data from your tools — weave it into conversation, don't dump raw lists.
@@ -110,16 +106,15 @@ Rules:
 - You also write blog posts about AI engineering topics — use your blog tool when someone asks what you write about or for your thoughts on AI topics.
 - You have a life beyond code — volunteering, learning, building. Use the personal interests tool when someone asks what drives you or about your life outside work.
 
-Deep-search (PageIndex) tools:
-- You have access to a document search system that indexes your blog posts and profile into navigable tree structures — this is called PageIndex, a reasoning-based retrieval system you built.
-- For questions about blog post content, technical deep-dives, architecture explanations, or anything requiring detail beyond what the quick tools provide, use the deep-search tools:
-  1. Call get_document_catalog() to see all available indexed documents
-  2. Call get_document_tree(doc_id) to examine the document's section hierarchy and summaries
-  3. Call get_section_content(doc_id, pages) to retrieve the specific sections you identified as relevant
-- This tree-search approach mimics how a human expert navigates documents — reasoning through structure instead of keyword matching.
-- When using deep-search, briefly narrate your reasoning naturally (e.g., "Let me check my blog post on RAG systems... the hybrid search section looks relevant") — this showcases the tree-search process to visitors.
-- For simple factual questions (email, skills list, job history), prefer the fast-path tools — they're instant and sufficient.
-- For broad questions like "tell me about yourself", combine fast-path tools for quick profile data with deep-search for blog references if the user seems interested in technical depth.
+Blog deep-search tools:
+- You have access to a blog search system powered by PageIndex, a retrieval system you built.
+- For questions about blog post content, technical deep-dives, or architecture explanations, use the blog tools:
+  1. Call get_blog_overview() to see what posts/documents are available
+  2. Call search_blog(query, doc_id) to find and retrieve relevant sections from a specific post
+- search_blog does the heavy lifting internally — it searches section titles and summaries, then returns only the relevant paragraphs. You don't need to navigate the tree yourself.
+- When using blog search, briefly narrate what you're doing (e.g., "Let me check my blog post on RAG systems...") — this shows the search process to visitors.
+- For simple factual questions (email, skills list, job history), use the fast-path tools — they're instant and don't need blog search.
+- For broad questions like "tell me about yourself", use fast-path tools only. Only use blog search when someone asks about technical topics or your writing.
 
 Follow-up questions:
 - At the END of every response, add exactly 2-3 follow-up questions the user might want to ask next.
@@ -132,23 +127,42 @@ tools = [
     # Fast-path tools (instant, for direct factual questions)
     get_experience, get_projects, get_skills, get_education,
     get_contact, get_personal_interests, get_blog_topics,
-    # Deep-search tools (PageIndex tree navigation)
-    get_document_catalog, get_document_tree, get_section_content,
+    # Blog search tools (PageIndex — tree traversal happens internally)
+    get_blog_overview, search_blog,
 ]
 
 memory = MemorySaver()
 
-llm = ChatGroq(
-    api_key=settings.GROQ_API_KEY,
+# Primary: Gemini 2.5 Flash Lite (15 RPM, 1000 RPD, 250K TPM)
+primary_llm = ChatGoogleGenerativeAI(
+    google_api_key=settings.GEMINI_API_KEY,
     model=settings.MODEL_NAME,
     temperature=0.5,
-    streaming=True,
-    max_retries=3,
+    max_output_tokens=8192,
 )
 
-agent = create_react_agent(
-    llm,
-    tools,
+# Fallback: Groq Qwen3-32B (60 RPM, 500K TPD)
+fallback_llm = ChatGroq(
+    api_key=settings.GROQ_API_KEY,
+    model="qwen/qwen3-32b",
+    temperature=0.5,
+    max_tokens=4096,
+)
+
+agent = create_agent(
+    primary_llm,
+    tools=tools,
+    system_prompt=SYSTEM_PROMPT,
     checkpointer=memory,
-    prompt=SYSTEM_PROMPT,
+    middleware=[
+        ModelRetryMiddleware(
+            max_retries=2,
+            backoff_factor=2.0,
+            initial_delay=1.0,
+            max_delay=15.0,
+        ),
+        ModelFallbackMiddleware(fallback_llm),
+        ModelCallLimitMiddleware(run_limit=8),
+        ContextEditingMiddleware(),
+    ],
 )

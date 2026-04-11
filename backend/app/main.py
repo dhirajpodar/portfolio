@@ -90,43 +90,75 @@ def extract_followups(text: str) -> tuple[str, list[str]]:
 
 
 async def _stream_agent(input_message, config, thread_id):
-    """Yield SSE events from a single agent.astream() call."""
+    """Yield SSE events from a single agent.astream() call.
+
+    Handles both AIMessageChunk (streaming/create_react_agent) and
+    AIMessage (non-streaming/create_agent) event types.
+    """
     full_content = ""
     has_emitted_thinking = False
+    tool_count = 0
+    chunk_count = 0
+    pending_content = ""
+    any_tool_seen = False
+
+    logger.info(f"[{thread_id[:8]}] Agent stream started")
 
     async for event, metadata in agent.astream(
         input_message, config=config, stream_mode="messages"
     ):
         msg_type = type(event).__name__
 
-        if msg_type == "AIMessageChunk":
-            tool_chunks = event.tool_call_chunks or []
-            if tool_chunks:
+        if msg_type in ("AIMessageChunk", "AIMessage"):
+            # Handle tool calls: chunks use tool_call_chunks, full messages use tool_calls
+            tool_items = getattr(event, "tool_call_chunks", None) or getattr(event, "tool_calls", None) or []
+            if tool_items:
+                any_tool_seen = True
+                if pending_content:
+                    logger.info(f"[{thread_id[:8]}] Discarding pre-tool thinking ({len(pending_content)} chars)")
+                    pending_content = ""
                 if not has_emitted_thinking:
                     yield "event", json.dumps({"type": "thinking", "thread_id": thread_id})
                     has_emitted_thinking = True
-                for tc in tool_chunks:
-                    name = tc.get("name", "")
+                for tc in tool_items:
+                    name = tc.get("name", "") if isinstance(tc, dict) else getattr(tc, "name", "")
                     if name:
+                        tool_count += 1
+                        logger.info(f"[{thread_id[:8]}] Tool call #{tool_count}: {name}")
                         event_data = {
                             "type": "tool_start",
                             "tool": name,
                             "thread_id": thread_id,
                         }
-                        if name in ("get_document_tree", "get_section_content", "get_document_catalog"):
-                            event_data["args"] = tc.get("args", "")
+                        if name in ("get_blog_overview", "search_blog"):
+                            args = tc.get("args", "") if isinstance(tc, dict) else getattr(tc, "args", "")
+                            event_data["args"] = args if isinstance(args, str) else json.dumps(args)
                         yield "event", json.dumps(event_data)
             elif event.content:
-                full_content += event.content
-                yield "event", json.dumps({
-                    "type": "content",
-                    "content": event.content,
-                    "thread_id": thread_id,
-                })
+                if any_tool_seen:
+                    chunk_count += 1
+                    full_content += event.content
+                    yield "event", json.dumps({
+                        "type": "content",
+                        "content": event.content,
+                        "thread_id": thread_id,
+                    })
+                else:
+                    pending_content += event.content
+
+            # Log finish reason and token usage if present
+            if hasattr(event, "response_metadata") and event.response_metadata:
+                finish = event.response_metadata.get("finish_reason")
+                if finish:
+                    logger.info(f"[{thread_id[:8]}] Finish reason: {finish}")
+                usage = event.response_metadata.get("usage") or event.response_metadata.get("token_usage")
+                if usage:
+                    logger.info(f"[{thread_id[:8]}] Tokens: {usage}")
 
         elif msg_type == "ToolMessage":
             output = str(event.content)
             preview = output[:150] + "..." if len(output) > 150 else output
+            logger.info(f"[{thread_id[:8]}] Tool result: {event.name} ({len(output)} chars)")
             yield "event", json.dumps({
                 "type": "tool_end",
                 "tool": event.name,
@@ -134,12 +166,24 @@ async def _stream_agent(input_message, config, thread_id):
                 "thread_id": thread_id,
             })
 
+    # If no tools were called, the buffered content IS the direct response
+    if pending_content and not any_tool_seen:
+        full_content = pending_content
+        yield "event", json.dumps({
+            "type": "content",
+            "content": pending_content,
+            "thread_id": thread_id,
+        })
+
+    logger.info(f"[{thread_id[:8]}] Stream complete: {chunk_count} chunks, {tool_count} tools, {len(full_content)} chars")
     yield "content", full_content
 
 
 async def stream_response(message: str, thread_id: str):
     config = {"configurable": {"thread_id": thread_id}}
     input_message = {"messages": [{"role": "user", "content": message}]}
+
+    logger.info(f"[{thread_id[:8]}] Chat request: {message[:100]}{'...' if len(message) > 100 else ''}")
 
     full_content = ""
     max_retries = 2
@@ -159,19 +203,21 @@ async def stream_response(message: str, thread_id: str):
 
             if is_rate_limit and attempt < max_retries:
                 wait = (attempt + 1) * 5  # 5s, 10s
-                logger.warning(f"Rate limit hit (attempt {attempt + 1}), retrying in {wait}s...")
+                logger.warning(f"[{thread_id[:8]}] Rate limit (attempt {attempt + 1}/{max_retries}), retrying in {wait}s")
                 yield f"data: {json.dumps({'type': 'content', 'content': chr(10) + chr(10) + '*One moment, gathering my thoughts...*' + chr(10) + chr(10), 'thread_id': thread_id})}\n\n"
                 await asyncio.sleep(wait)
                 continue
 
-            logger.error(f"Streaming error: {e}")
+            logger.error(f"[{thread_id[:8]}] Streaming error: {type(e).__name__}: {e}")
             yield f"data: {json.dumps({'type': 'error', 'error': 'Something went wrong. Please try again.', 'thread_id': thread_id})}\n\n"
             break
 
     _, followups = extract_followups(full_content)
     if followups:
+        logger.info(f"[{thread_id[:8]}] Follow-ups: {len(followups)}")
         yield f"data: {json.dumps({'type': 'followups', 'questions': followups, 'thread_id': thread_id})}\n\n"
 
+    logger.info(f"[{thread_id[:8]}] Response complete: {len(full_content)} chars")
     yield f"data: {json.dumps({'type': 'done', 'thread_id': thread_id})}\n\n"
 
 

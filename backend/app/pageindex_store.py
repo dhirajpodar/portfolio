@@ -92,3 +92,60 @@ def get_tree_without_text(doc_id: str) -> list:
     if not doc_info:
         return []
     return remove_fields(doc_info.get("structure", []), fields=("text",))
+
+
+def get_blog_overview() -> str:
+    """Return a compact one-liner per document for the agent to pick from."""
+    lines = []
+    for doc_id, doc_info in _documents.items():
+        desc = doc_info.get("doc_description", "")
+        short = desc[:80].rsplit(" ", 1)[0] + "..." if len(desc) > 80 else desc
+        lines.append(f"- {doc_id}: {short}")
+    return "\n".join(lines)
+
+
+def search_document(doc_id: str, query: str) -> str:
+    """Search a document's tree by matching query keywords against section
+    titles and summaries. Returns the full text of matching sections.
+
+    This keeps the tree traversal out of the LLM context — the agent only
+    sees the final relevant paragraphs.
+    """
+    doc_info = _documents.get(doc_id)
+    if not doc_info:
+        return json.dumps({"error": f"Document '{doc_id}' not found"})
+
+    query_lower = query.lower()
+    keywords = [w.strip() for w in query_lower.split() if len(w.strip()) > 2]
+    matches = []
+
+    def _score_and_collect(nodes):
+        for node in nodes:
+            title = (node.get("title") or "").lower()
+            summary = (node.get("summary") or "").lower()
+            text = node.get("text") or ""
+            searchable = title + " " + summary
+
+            # Score: count how many query keywords appear in title+summary
+            score = sum(1 for kw in keywords if kw in searchable)
+            if score > 0:
+                matches.append((score, node.get("line_num", 0), title, text))
+
+            if node.get("nodes"):
+                _score_and_collect(node["nodes"])
+
+    _traverse = doc_info.get("structure", [])
+    _score_and_collect(_traverse)
+
+    if not matches:
+        return json.dumps({"message": f"No sections matching '{query}' in {doc_id}"})
+
+    # Sort by score descending, take top 3 to keep context lean
+    matches.sort(key=lambda x: (-x[0], x[1]))
+    top = matches[:3]
+
+    results = []
+    for score, line_num, title, text in top:
+        results.append({"section": title, "line": line_num, "content": text})
+
+    return json.dumps(results, ensure_ascii=False)
