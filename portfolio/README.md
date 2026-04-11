@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio
 
-## Getting Started
+AI-powered portfolio website with an agentic chat assistant that uses reasoning-based tree-search retrieval (PageIndex) instead of vector databases.
 
-First, run the development server:
+## Project Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+portfolio/
+├── frontend/       Next.js app (UI, blog, chat interface)
+├── backend/        FastAPI + LangGraph agent + PageIndex
+└── docker-compose.yml
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Backend
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+FastAPI API with a LangGraph ReAct agent that answers questions about my experience, projects, and blog posts.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Hybrid retrieval:**
+- **Fast-path** (7 tools) -- instant lookups for skills, experience, contact, etc.
+- **Deep-search** (3 PageIndex tools) -- reasoning-based tree navigation for blog content and technical deep-dives
 
-## Learn More
+**Stack:** Python, FastAPI, LangGraph, Groq (Kimi K2), PageIndex, SSE streaming
 
-To learn more about Next.js, take a look at the following resources:
+### Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cd backend
+pip install -r requirements.txt
+cp .env.example .env  # add your GROQ_API_KEY
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Build PageIndex indexes (one-time)
 
-## Deploy on Vercel
+```bash
+pip install litellm pyyaml
+GROQ_API_KEY=your_key python3 scripts/build_index.py
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Generates tree structures in `content/indexed/` from profile data and blog posts.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Run
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+### API Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /chat` | SSE streaming chat with the agent |
+| `GET /blog` | List all blog posts |
+| `GET /blog/{slug}` | Single blog post |
+| `GET /pageindex/documents` | Tree structures for all indexed documents |
+| `GET /pageindex/documents/{id}` | Single document tree |
+| `GET /pageindex/documents/{id}/sections/{lines}` | Section content by line numbers |
+| `GET /health` | Health check |
+
+## Frontend
+
+Next.js portfolio site with chat interface, blog, and project showcase.
+
+### Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Docker
+
+```bash
+docker compose up --build
+```
+
+## How PageIndex Works
+
+Traditional RAG uses vector similarity search. PageIndex replaces this with **reasoning-based tree-search**:
+
+1. Documents are indexed into hierarchical tree structures (like a table of contents)
+2. Each node has an LLM-generated summary
+3. At query time, the agent navigates the tree by reading summaries and reasoning about which sections are relevant
+4. Only the relevant sections are fetched -- precision retrieval through reasoning, not similarity
