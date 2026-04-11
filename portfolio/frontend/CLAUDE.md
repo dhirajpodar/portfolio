@@ -1,5 +1,3 @@
-@AGENTS.md
-
 # Frontend Guidelines
 
 ## Stack
