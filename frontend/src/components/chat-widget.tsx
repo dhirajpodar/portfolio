@@ -102,6 +102,18 @@ export default function ChatWidget() {
           try {
             const data = JSON.parse(trimmed.slice(6));
             if (data.type === "done") continue;
+            if (data.type === "error") {
+              // Remove the empty assistant bubble and show the error
+              setMessages((prev) => {
+                const last = prev[prev.length - 1];
+                if (last && last.role === "assistant" && !last.content) {
+                  return prev.slice(0, -1);
+                }
+                return prev;
+              });
+              setError(data.error || "Something went wrong");
+              continue;
+            }
             if (data.type === "content" && data.content) {
               setMessages((prev) => {
                 const updated = [...prev];
