@@ -3,19 +3,19 @@
 ## Stack
 
 - **Framework:** FastAPI with SSE streaming
-- **Agent:** LangGraph ReAct agent (10 tools)
-- **LLM:** Groq Kimi K2 (`moonshotai/kimi-k2-instruct`) via `langchain-groq`
+- **Agent:** LangGraph agent (9 tools) via `create_agent` with middleware
+- **LLM:** Gemini 2.5 Flash Lite (primary) with Groq Qwen3-32B fallback
 - **Retrieval:** Hybrid -- fast-path tools + PageIndex tree-search
 - **Python:** 3.10+
-- **Deps:** Poetry (`pyproject.toml`)
+- **Deps:** `requirements.txt` (pip) / `pyproject.toml` (Poetry)
 
 ## Structure
 
 ```
 app/
 ├── main.py              FastAPI app, SSE streaming, /chat, /blog, /pageindex endpoints
-├── agent.py             LangGraph ReAct agent, 10 tools, system prompt
-├── config.py            Pydantic settings (GROQ_API_KEY, MODEL_NAME)
+├── agent.py             LangGraph agent with middleware, 9 tools, system prompt
+├── config.py            Pydantic settings (GEMINI_API_KEY, GROQ_API_KEY, MODEL_NAME)
 ├── profile_data.py      Static profile content (experience, skills, projects, etc.)
 ├── blog.py              Blog post loading from content/posts/ (frontmatter + markdown)
 ├── notifications.py     Email notifications for new chat questions
@@ -41,19 +41,25 @@ content/
 **Fast-path (instant, no LLM overhead):**
 - `get_experience()`, `get_projects()`, `get_skills()`, `get_education()`, `get_contact()`, `get_personal_interests()`, `get_blog_topics()`
 
-**Deep-search (PageIndex tree navigation):**
-- `get_document_catalog()` -- list all indexed documents
-- `get_document_tree(doc_id)` -- tree structure with summaries
-- `get_section_content(doc_id, pages)` -- full text by line numbers
+**Deep-search (PageIndex -- tree traversal happens internally):**
+- `get_blog_overview()` -- compact list of all indexed documents
+- `search_blog(query, doc_id)` -- searches sections by keyword, returns top 3 matching sections
+
+## Middleware
+
+- **ModelRetry:** Exponential backoff (2 retries, 1-15s delay)
+- **ModelFallback:** Gemini -> Groq automatic failover
+- **ModelCallLimit:** Max 8 LLM calls per run
+- **ContextEditing:** Trims old tool outputs to save context
 
 ## Rules
 
 - `app/pageindex/` is runtime code with zero external deps. `scripts/` is build-time only (needs `litellm`, `pyyaml`)
 - Never add `litellm` or `pyyaml` to `pyproject.toml`
-- Model name for ChatGroq: WITHOUT `groq/` prefix (e.g. `moonshotai/kimi-k2-instruct`)
+- Model name for ChatGoogleGenerativeAI: plain name (e.g. `gemini-2.5-flash-lite`)
 - Model name for LiteLLM: WITH `groq/` prefix (e.g. `groq/moonshotai/kimi-k2-instruct`)
 - Pre-built indexes in `content/indexed/` -- regenerate with `python3 scripts/build_index.py`
-- ChatGroq has `max_retries=3` for rate limits. SSE stream retries up to 2x with 5s/10s backoff
+- SSE stream retries up to 2x with 5s/10s backoff for rate limits
 - System prompt in `agent.py` controls tool routing (fast-path vs deep-search)
 - Follow-up questions are embedded as HTML comments `<!-- followups: [...] -->` and extracted in `main.py`
 - Email notifications fire async on every `/chat` request (non-blocking)
@@ -61,9 +67,10 @@ content/
 ## Environment Variables
 
 ```
-GROQ_API_KEY=           # Required
-MODEL_NAME=             # Default: moonshotai/kimi-k2-instruct
-CORS_ORIGINS=           # Default: *
+GEMINI_API_KEY=          # Required (primary LLM)
+GROQ_API_KEY=            # Required (fallback LLM)
+MODEL_NAME=              # Default: gemini-2.5-flash-lite
+CORS_ORIGINS=            # Default: *
 EMAIL_NOTIFICATIONS_ENABLED=  # Default: false
 SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, NOTIFY_EMAIL  # Optional
 ```

@@ -110,7 +110,7 @@ export default function ChatWidget() {
                   updated[updated.length - 1] = {
                     ...last,
                     content: (last.content + data.content)
-                      .replace(/<!--\s*followups:\s*\[.*?\]\s*-->/gs, "")
+                      .replace(/<!--\s*followups:\s*\[[\s\S]*?\]\s*-->/g, "")
                       .trimEnd(),
                   };
                 }
@@ -324,6 +324,7 @@ export default function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask me anything..."
+                maxLength={2000}
                 disabled={isStreaming}
                 className="flex-1 rounded-xl border-none bg-[#1a1a24] px-3 py-2 text-sm outline-none placeholder:text-[#6b6b80] disabled:opacity-50"
                 style={{ color: "#e2e8f0" }}

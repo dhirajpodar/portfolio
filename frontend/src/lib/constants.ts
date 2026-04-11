@@ -327,6 +327,25 @@ export const EDUCATION: Education[] = [
   },
 ];
 
+// ─── About / Hero ───────────────────────────────────────────────────────────
+
+export const ABOUT_SUMMARY =
+  "I'm a full-stack AI engineer with 4+ years of experience building production AI platforms. As the first engineer at an AI startup, I ship LangGraph multi-agent systems, hybrid RAG pipelines, and Azure cloud infrastructure end-to-end. From GPU-accelerated computer vision to real-time AI streaming with a Next.js frontend — I own the stack from model to user.";
+
+export const STATS = [
+  { value: "4+", label: "Years Experience" },
+  { value: "6+", label: "AI Projects Shipped" },
+  { value: "3", label: "Countries Worked In" },
+  { value: "2", label: "Degrees" },
+];
+
+export const HERO_TITLES = [
+  "Agentic AI Engineer",
+  "Full-Stack Builder",
+  "RAG Pipeline Architect",
+  "Cloud-Native Developer",
+];
+
 // ─── Navigation ──────────────────────────────────────────────────────────────
 
 export const NAV_LINKS = [
