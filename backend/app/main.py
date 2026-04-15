@@ -32,6 +32,7 @@ async def lifespan(app: FastAPI):
     else:
         logger.info(f"PageIndex: {doc_count} documents loaded")
     logger.info("Portfolio API started")
+    logger.info(f"Email notifications: enabled={settings.EMAIL_NOTIFICATIONS_ENABLED}, api_key_set={bool(settings.RESEND_API_KEY)}, notify_email={settings.NOTIFY_EMAIL or 'not set'}")
     yield
 
 
