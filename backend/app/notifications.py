@@ -44,7 +44,11 @@ def _do_send_email(question: str, thread_id: str, timestamp: str) -> None:
 
 async def notify_new_question(question: str, thread_id: str) -> None:
     """Fire-and-forget async email notification."""
-    if not settings.EMAIL_NOTIFICATIONS_ENABLED or not settings.RESEND_API_KEY:
+    if not settings.EMAIL_NOTIFICATIONS_ENABLED:
+        logger.debug("Email notifications disabled (EMAIL_NOTIFICATIONS_ENABLED=false)")
+        return
+    if not settings.RESEND_API_KEY:
+        logger.warning("Email notifications enabled but RESEND_API_KEY is not set")
         return
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     await asyncio.to_thread(send_question_email, question, thread_id, timestamp)
