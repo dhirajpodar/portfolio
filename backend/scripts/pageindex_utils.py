@@ -7,6 +7,7 @@ Only markdown-related utilities retained.
 import litellm
 import logging
 import os
+import re
 import textwrap
 import time
 import json
@@ -29,9 +30,17 @@ def count_tokens(text, model=None):
 
 def _parse_retry_after(error_msg: str) -> float:
     """Extract retry-after seconds from Groq rate limit error, fallback to 0."""
-    import re
     match = re.search(r"try again in ([\d.]+)s", str(error_msg).lower())
     return float(match.group(1)) if match else 0
+
+
+_THINK_RE = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
+
+
+def _strip_reasoning(content):
+    if not isinstance(content, str):
+        return content
+    return _THINK_RE.sub("", content).lstrip()
 
 
 def llm_completion(model, prompt, chat_history=None, return_finish_reason=False):
@@ -50,7 +59,7 @@ def llm_completion(model, prompt, chat_history=None, return_finish_reason=False)
                 messages=messages,
                 temperature=0,
             )
-            content = response.choices[0].message.content
+            content = _strip_reasoning(response.choices[0].message.content)
             if return_finish_reason:
                 finish_reason = (
                     "max_output_reached"
@@ -84,7 +93,7 @@ async def llm_acompletion(model, prompt):
                 messages=messages,
                 temperature=0,
             )
-            return response.choices[0].message.content
+            return _strip_reasoning(response.choices[0].message.content)
         except Exception as e:
             logging.error(f"LLM async completion error (attempt {i+1}): {e}")
             if i < max_retries - 1:

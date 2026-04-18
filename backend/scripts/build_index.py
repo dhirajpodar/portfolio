@@ -25,7 +25,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 from profile_to_markdown import save_profile_markdown
 from page_index_md import md_to_tree
 
-MODEL = "groq/moonshotai/kimi-k2-instruct"
+MODEL = "groq/qwen/qwen3-32b"
 SUMMARY_TOKEN_THRESHOLD = 200
 INDEXED_DIR = os.path.join(PROJECT_ROOT, "content", "indexed")
 POSTS_DIR = os.path.join(PROJECT_ROOT, "content", "posts")
