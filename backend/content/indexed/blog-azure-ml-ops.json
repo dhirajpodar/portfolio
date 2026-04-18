@@ -1,6 +1,6 @@
 {
   "doc_name": "azure-ml-ops",
-  "doc_description": "This document provides an overview of the deployment stack for an AI platform on Azure, covering infrastructure as code, container apps deployment, evaluation pipelines, and monitoring and observability.",
+  "doc_description": "This document outlines an MLOps deployment stack on Azure for an AI platform, detailing infrastructure-as-code (Bicep) for resources like Container Apps and PostgreSQL, GitHub Actions for CI/CD, KEDA event-driven autoscaling, and monitoring with PostHog, Prometheus, Grafana, and LangSmith for LLM observability.",
   "line_count": 58,
   "structure": [
     {
@@ -15,7 +15,7 @@
       "node_id": "0001",
       "line_num": 15,
       "text": "## Infrastructure with Bicep\n\nAll infrastructure is defined as code using Azure Bicep. This includes Container Apps environments, PostgreSQL Flexible Server, Redis Cache, Key Vault, VNet configuration, and private endpoints. Every environment (dev, staging, prod) is provisioned from the same templates with parameter files.\n\n```bicep\n// Bicep module for Container App\nresource containerApp 'Microsoft.App/containerApps@2023-05-01' = {\n  name: appName\n  location: location\n  properties: {\n    managedEnvironmentId: environment.id\n    configuration: {\n      ingress: { external: true, targetPort: 8000 }\n      secrets: [{ name: 'db-conn', keyVaultUrl: dbConnSecret }]\n    }\n    template: {\n      containers: [{ name: 'api', image: image, resources: { cpu: 1, memory: '2Gi' } }]\n      scale: { minReplicas: 1, maxReplicas: 10 }\n    }\n  }\n}\n```",
-      "summary": "The partial document discusses infrastructure as code using Azure Bicep, covering the definition of various infrastructure components such as Container Apps environments, PostgreSQL Flexible Server, Redis Cache, Key Vault, VNet configuration, and private endpoints. It highlights the use of Bicep templates and parameter files to provision different environments, including dev, staging, and prod, from the same templates. A specific Bicep module example is provided for a Container App, demonstrating how to define properties like ingress, secrets, and template configurations for the container app, including scaling and resource allocation."
+      "summary": "The partial document outlines the use of Azure Bicep for infrastructure-as-code (IaC) provisioning, covering resources like Container Apps environments, PostgreSQL Flexible Server, Redis Cache, Key Vault, VNet configurations, and private endpoints. It emphasizes consistent deployment across dev, staging, and production environments using shared templates with parameterized configurations. A provided Bicep code example defines a Container App resource, specifying properties such as environment linkage, ingress settings (e.g., external access on port 8000), Key Vault secret integration for database connections, container specifications (image, CPU/memory), and autoscaling parameters (min/max replicas)."
     },
     {
       "title": "Container Apps Deployment",

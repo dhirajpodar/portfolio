@@ -1,5 +1,5 @@
-model: "groq/moonshotai/kimi-k2-instruct"
-retrieve_model: "groq/moonshotai/kimi-k2-instruct"
+model: "groq/qwen/qwen3-32b"
+retrieve_model: "groq/qwen/qwen3-32b"
 toc_check_page_num: 20
 max_page_num_each_node: 10
 max_token_num_each_node: 20000
