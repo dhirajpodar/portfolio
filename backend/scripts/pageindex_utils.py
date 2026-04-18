@@ -7,6 +7,7 @@ Only markdown-related utilities retained.
 import litellm
 import logging
 import os
+import re
 import textwrap
 import time
 import json
@@ -29,12 +30,12 @@ def count_tokens(text, model=None):
 
 def _parse_retry_after(error_msg: str) -> float:
     """Extract retry-after seconds from Groq rate limit error, fallback to 0."""
-    import re
     match = re.search(r"try again in ([\d.]+)s", str(error_msg).lower())
     return float(match.group(1)) if match else 0
 
 
-_THINK_RE = __import__("re").compile(r"<think>.*?</think>\s*", __import__("re").DOTALL)
+_THINK_RE = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
+
 
 def _strip_reasoning(content):
     if not isinstance(content, str):

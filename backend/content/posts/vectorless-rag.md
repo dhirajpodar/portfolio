@@ -49,7 +49,7 @@ Three properties fall out of this design that you can't easily bolt onto a vecto
 
 **Retrieval tolerates query-document vocabulary gaps.** The LLM doing the traversal doesn't need the query and the document to use the same words. It's reasoning about what a section is *about*, not measuring token overlap.
 
-The FinanceBench numbers — 98.7% accuracy on SEC filings using a PageIndex-powered system — aren't surprising once you see the mechanism. Financial filings are the canonical case where structure carries most of the meaning and similarity search throws most of it away.
+The [FinanceBench numbers](https://pageindex.ai/blog/Mafin2.5) — 98.7% accuracy on SEC filings using VectifyAI's PageIndex-powered Mafin 2.5, versus around 50% for traditional vector RAG on the same benchmark — aren't surprising once you see the mechanism. Financial filings are the canonical case where structure carries most of the meaning and similarity search throws most of it away.
 
 ## Where it doesn't apply
 
