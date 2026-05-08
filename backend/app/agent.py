@@ -1,5 +1,6 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain.agents import create_agent
 from langchain.agents.middleware import (
@@ -11,7 +12,10 @@ from langchain.agents.middleware import (
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.config import settings
-from app.profile_data import EXPERIENCE, PROJECTS, SKILLS, EDUCATION, CONTACT, PERSONAL_INTERESTS
+from app.profile_data import (
+    EXPERIENCE, SKILLS, EDUCATION, CONTACT, PERSONAL_INTERESTS,
+    STORIES, AVAILABILITY, WHATS_NEXT,
+)
 from app.blog import load_all_posts
 from app import pageindex_store
 
@@ -20,12 +24,6 @@ from app import pageindex_store
 def get_experience() -> str:
     """Get Dhiraj Poddar's complete work experience and employment history."""
     return EXPERIENCE
-
-
-@tool
-def get_projects() -> str:
-    """Get details about Dhiraj Poddar's key projects including CostData and MAiQ."""
-    return PROJECTS
 
 
 @tool
@@ -50,6 +48,41 @@ def get_contact() -> str:
 def get_personal_interests() -> str:
     """Get Dhiraj Poddar's personal interests, passions, volunteering work, and what drives him beyond work."""
     return PERSONAL_INTERESTS
+
+
+@tool
+def get_story(topic: str) -> str:
+    """Get a first-person narrative about a tough problem Dhiraj solved or a project he shipped.
+
+    Use this for questions like "walk me through a tough problem", "what have you built with AI agents",
+    "tell me about a hard project", or "what's something challenging you've worked on". Prefer this over
+    get_experience() when the user wants a story, not a resume.
+
+    Available topics:
+    - "hybrid_rag" — building retrieval at MAiQ for large docs and engineering drawings (BM25 + pgvector + Cohere rerank, eval-driven)
+    - "customer_ship" — shipping a production commodity-pricing AI agent end-to-end for an external customer
+
+    Pass the topic key as a string. If unsure which story fits, pick the closest match.
+    """
+    story = STORIES.get(topic)
+    if story is None:
+        available = ", ".join(STORIES.keys())
+        return f"No story found for '{topic}'. Available topics: {available}"
+    return story
+
+
+@tool
+def get_availability() -> str:
+    """Get Dhiraj's current availability for new roles — location preferences, work authorization, current status.
+    Use this when someone asks if he's open to roles, hiring, looking for work, or about location/visa."""
+    return AVAILABILITY
+
+
+@tool
+def get_whats_next() -> str:
+    """Get what excites Dhiraj going forward — what kind of team he wants to join and what he wants to build next.
+    Use this for forward-looking questions like 'what excites you', 'what do you want to build', 'what's next for you'."""
+    return WHATS_NEXT
 
 
 @tool
@@ -97,7 +130,7 @@ Response style:
 - If someone asks something you don't have data for, say so honestly — "I don't have that info on hand" not a hallucinated answer
 
 Rules:
-- CRITICAL: You MUST call your tools BEFORE answering ANY question about your experience, projects, skills, education, contact info, blog posts, or personal interests. NEVER answer from memory or general knowledge — always fetch the data first. If you answer without calling a tool, you WILL hallucinate.
+- CRITICAL: You MUST call your tools BEFORE answering ANY question about your experience, skills, education, contact info, blog posts, or personal interests. NEVER answer from memory or general knowledge — always fetch the data first. If you answer without calling a tool, you WILL hallucinate.
 - IMPORTANT: When calling tools, call them immediately without any preamble, thinking, or narration text. Do NOT output text like "Let me look into that..." before your first tool call — just call the tools directly. Narration is only allowed BETWEEN deep-search tool calls to showcase the tree-search process.
 - For greetings or general conversation that don't ask about your background, you can respond directly.
 - NEVER expose tool names, function calls, or internal syntax like <function=...> to the user.
@@ -105,6 +138,13 @@ Rules:
 - If a question covers multiple topics (e.g. "tell me about yourself"), call multiple tools to gather all relevant data before responding.
 - You also write blog posts about AI engineering topics — use your blog tool when someone asks what you write about or for your thoughts on AI topics.
 - You have a life beyond code — volunteering, learning, building. Use the personal interests tool when someone asks what drives you or about your life outside work.
+
+Storytelling vs. resume mode:
+- For "tough problem", "walk me through", "what have you built with AI agents", "tell me about a hard project", or anything that wants a story — call get_story() FIRST. Topics: "hybrid_rag", "customer_ship". Pick the one that fits the question best.
+- get_experience() returns resume bullets. Only use it for "what's your work history" type questions, or as a supplement after a story.
+- For "are you hiring / open to roles / available / where are you based" — call get_availability().
+- For "what excites you / what do you want to build next / what's next" — call get_whats_next().
+- After telling a story, if there's a related blog post that goes deeper, include a follow-up question that offers to pull from it. Mappings: hybrid_rag → "building-rag-pipelines" and "vectorless-rag" posts. customer_ship → no direct match, skip.
 
 Blog deep-search tools:
 - You have access to a blog search system powered by PageIndex, a retrieval system you built.
@@ -125,8 +165,10 @@ Follow-up questions:
 
 tools = [
     # Fast-path tools (instant, for direct factual questions)
-    get_experience, get_projects, get_skills, get_education,
+    get_experience, get_skills, get_education,
     get_contact, get_personal_interests, get_blog_topics,
+    # Narrative + status tools
+    get_story, get_availability, get_whats_next,
     # Blog search tools (PageIndex — tree traversal happens internally)
     get_blog_overview, search_blog,
 ]
@@ -141,13 +183,25 @@ primary_llm = ChatGoogleGenerativeAI(
     max_output_tokens=8192,
 )
 
-# Fallback: Groq Qwen3-32B (60 RPM, 500K TPD)
-fallback_llm = ChatGroq(
+# Fallback 1: Groq Qwen3-32B (60 RPM, 500K TPD)
+groq_fallback_llm = ChatGroq(
     api_key=settings.GROQ_API_KEY,
     model="qwen/qwen3-32b",
     temperature=0.5,
     max_tokens=4096,
 )
+
+# Fallback 2: OpenAI (paid, used when Gemini and Groq are both rate-limited)
+fallbacks: list = [groq_fallback_llm]
+if settings.OPENAI_API_KEY:
+    fallbacks.append(
+        ChatOpenAI(
+            api_key=settings.OPENAI_API_KEY,
+            model=settings.OPENAI_MODEL,
+            temperature=0.5,
+            max_tokens=4096,
+        )
+    )
 
 agent = create_agent(
     primary_llm,
@@ -161,7 +215,7 @@ agent = create_agent(
             initial_delay=1.0,
             max_delay=15.0,
         ),
-        ModelFallbackMiddleware(fallback_llm),
+        ModelFallbackMiddleware(*fallbacks),
         ModelCallLimitMiddleware(run_limit=8),
         ContextEditingMiddleware(),
     ],
