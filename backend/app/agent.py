@@ -1,5 +1,6 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain.agents import create_agent
 from langchain.agents.middleware import (
@@ -141,13 +142,25 @@ primary_llm = ChatGoogleGenerativeAI(
     max_output_tokens=8192,
 )
 
-# Fallback: Groq Qwen3-32B (60 RPM, 500K TPD)
-fallback_llm = ChatGroq(
+# Fallback 1: Groq Qwen3-32B (60 RPM, 500K TPD)
+groq_fallback_llm = ChatGroq(
     api_key=settings.GROQ_API_KEY,
     model="qwen/qwen3-32b",
     temperature=0.5,
     max_tokens=4096,
 )
+
+# Fallback 2: OpenAI (paid, used when Gemini and Groq are both rate-limited)
+fallbacks: list = [groq_fallback_llm]
+if settings.OPENAI_API_KEY:
+    fallbacks.append(
+        ChatOpenAI(
+            api_key=settings.OPENAI_API_KEY,
+            model=settings.OPENAI_MODEL,
+            temperature=0.5,
+            max_tokens=4096,
+        )
+    )
 
 agent = create_agent(
     primary_llm,
@@ -161,7 +174,7 @@ agent = create_agent(
             initial_delay=1.0,
             max_delay=15.0,
         ),
-        ModelFallbackMiddleware(fallback_llm),
+        ModelFallbackMiddleware(*fallbacks),
         ModelCallLimitMiddleware(run_limit=8),
         ContextEditingMiddleware(),
     ],
