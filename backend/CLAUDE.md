@@ -3,7 +3,7 @@
 ## Stack
 
 - **Framework:** FastAPI with SSE streaming
-- **Agent:** LangGraph agent (9 tools) via `create_agent` with middleware
+- **Agent:** LangGraph agent (11 tools) via `create_agent` with middleware
 - **LLM:** Gemini 2.5 Flash Lite (primary) with Groq Qwen3-32B fallback
 - **Retrieval:** Hybrid -- fast-path tools + PageIndex tree-search
 - **Python:** 3.10+
@@ -39,7 +39,12 @@ content/
 ## Agent Tools
 
 **Fast-path (instant, no LLM overhead):**
-- `get_experience()`, `get_projects()`, `get_skills()`, `get_education()`, `get_contact()`, `get_personal_interests()`, `get_blog_topics()`
+- `get_experience()`, `get_skills()`, `get_education()`, `get_contact()`, `get_personal_interests()`, `get_blog_topics()`
+
+**Narrative / status (instant):**
+- `get_story(topic)` -- first-person story for "tough problem" / "what have you built" questions. Topics: `hybrid_rag`, `customer_ship`
+- `get_availability()` -- current role-search status, location, work authorization
+- `get_whats_next()` -- forward-looking: what excites him, what he wants to build
 
 **Deep-search (PageIndex -- tree traversal happens internally):**
 - `get_blog_overview()` -- compact list of all indexed documents
@@ -72,5 +77,6 @@ GROQ_API_KEY=            # Required (fallback LLM)
 MODEL_NAME=              # Default: gemini-2.5-flash-lite
 CORS_ORIGINS=            # Default: *
 EMAIL_NOTIFICATIONS_ENABLED=  # Default: false
-SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, NOTIFY_EMAIL  # Optional
+RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_FROM  # Resend config (used when notifications enabled)
+IPINFO_TOKEN=            # Optional: enriches notification emails with visitor geo/ISP (ipinfo.io)
 ```
