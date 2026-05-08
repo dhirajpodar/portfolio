@@ -114,7 +114,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
               ) : (
                 <div className="max-w-[85%] chat-markdown" style={{ color: "#adaaaa" }}>
                   {msg.content ? (
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <ReactMarkdown>{msg.content.replace(/<!--\s*followups:[\s\S]*?-->/g, "").trim()}</ReactMarkdown>
                   ) : isStreaming ? (
                     <span className="inline-flex items-center gap-1">
                       <span
