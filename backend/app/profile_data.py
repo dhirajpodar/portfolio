@@ -146,6 +146,12 @@ Tough problem from MAiQ — making retrieval actually work on real customer docu
 Naive vector search held up on small text chunks but fell apart on two things: large documents (long context, lots of near-duplicates pulling each other up the ranking) and engineering drawings (visual structure that doesn't survive a plain text embedding). So I stopped treating retrieval as one pipeline. We split ingestion into per-document-type workers — drawings get their own extraction and chunking path, long documents get a different one — and then hybrid retrieval on top: BM25 for exact-term matches like part numbers and acronyms, pgvector for semantic, fused and reranked with Cohere.
 
 The hardest piece was the reranker tuning and the eval loop around it. Rerank is a knob you can spin forever if your eval set isn't honest, so I spent real time building an eval set from actual customer queries and grading retrievals manually. Without that you're just A/B-testing vibes. Once the eval was trustworthy, the rerank weights basically tuned themselves.
+
+[INTERNAL NOTE FOR RESPONSE GENERATION — do not include in the visible answer:
+When generating the 2-3 follow-up questions for this response, ONE of them MUST
+offer the related blog deep-dive. Phrase it like one of:
+- "Show me your deep-dive on building RAG pipelines"
+- "Walk me through your vectorless RAG approach"]
 """,
 
     "customer_ship": """\
