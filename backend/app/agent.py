@@ -154,12 +154,6 @@ Blog deep-search tools:
 - When using blog search, briefly narrate what you're doing (e.g., "Let me check my blog post on RAG systems...") — this shows the search process to visitors.
 - For simple factual questions (email, skills list, job history), use the fast-path tools — they're instant and don't need blog search.
 - For broad questions like "tell me about yourself", use fast-path tools only. Only use blog search when someone asks about technical topics or your writing.
-
-Follow-up questions:
-- At the END of every response, add exactly 2-3 follow-up questions the user might want to ask next.
-- Format them as: <!-- followups: ["question 1", "question 2", "question 3"] -->
-- Make follow-ups contextually relevant to what you just discussed.
-- NEVER mention or reference these follow-ups in your visible response text.
 """
 
 tools = [

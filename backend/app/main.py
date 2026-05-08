@@ -3,7 +3,6 @@ import sys
 from contextlib import asynccontextmanager, nullcontext
 import json
 import logging
-import re
 import uuid
 
 import uvicorn
@@ -69,19 +68,6 @@ class ChatRequest(BaseModel):
 @app.get("/health")
 async def health():
     return {"status": "ok"}
-
-
-def extract_followups(text: str) -> tuple[str, list[str]]:
-    """Extract follow-up questions from <!-- followups: [...] --> comment and return cleaned text + questions."""
-    match = re.search(r"<!--\s*followups:\s*(\[.*?\])\s*-->", text, re.DOTALL)
-    if not match:
-        return text, []
-    try:
-        questions = json.loads(match.group(1))
-    except (json.JSONDecodeError, ValueError):
-        return text, []
-    cleaned = text[:match.start()].rstrip()
-    return cleaned, questions
 
 
 async def _stream_agent(input_message, config, thread_id):
@@ -214,11 +200,6 @@ async def stream_response(message: str, thread_id: str):
             logger.error(f"[{thread_id[:8]}] Streaming error: {type(e).__name__}: {e}")
             yield f"data: {json.dumps({'type': 'error', 'error': 'Something went wrong. Please try again.', 'thread_id': thread_id})}\n\n"
             break
-
-    _, followups = extract_followups(full_content)
-    if followups:
-        logger.info(f"[{thread_id[:8]}] Follow-ups: {len(followups)}")
-        yield f"data: {json.dumps({'type': 'followups', 'questions': followups, 'thread_id': thread_id})}\n\n"
 
     logger.info(f"[{thread_id[:8]}] Response complete: {len(full_content)} chars")
     yield f"data: {json.dumps({'type': 'done', 'thread_id': thread_id})}\n\n"
