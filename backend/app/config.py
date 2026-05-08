@@ -23,9 +23,9 @@ class Settings(BaseSettings):
     # Grounded in Gemini 2.5 Flash Lite free tier (15 RPM / 1000 RPD) and
     # agent's 8-call-per-chat ceiling — see backend/CLAUDE.md.
     RATE_LIMIT_ENABLED: bool = True
-    RATE_LIMIT_PER_IP_PER_MIN: int = 3
-    RATE_LIMIT_PER_IP_PER_DAY: int = 20
-    RATE_LIMIT_GLOBAL_PER_DAY: int = 250
+    RATE_LIMIT_PER_IP_PER_MIN: int = 6
+    RATE_LIMIT_PER_IP_PER_DAY: int = 40
+    RATE_LIMIT_GLOBAL_PER_DAY: int = 500
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

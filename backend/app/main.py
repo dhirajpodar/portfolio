@@ -1,12 +1,13 @@
 import asyncio
-from contextlib import asynccontextmanager
+import sys
+from contextlib import asynccontextmanager, nullcontext
 import json
 import logging
 import re
 import uuid
 
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import pydantic
@@ -17,6 +18,7 @@ from app.agent import agent
 from app.blog import load_all_posts, load_post, get_all_tags
 from app.notifications import notify_new_question
 from app import pageindex_store
+from app.rate_limit import RateLimiter
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -37,6 +39,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Portfolio API", lifespan=lifespan)
+
+rate_limiter = RateLimiter(
+    per_ip_per_min=settings.RATE_LIMIT_PER_IP_PER_MIN,
+    per_ip_per_day=settings.RATE_LIMIT_PER_IP_PER_DAY,
+    global_per_day=settings.RATE_LIMIT_GLOBAL_PER_DAY,
+)
 
 origins = (
     settings.CORS_ORIGINS.split(",")
@@ -177,7 +185,8 @@ async def stream_response(message: str, thread_id: str):
 
     for attempt in range(max_retries + 1):
         try:
-            async with asyncio.timeout(60):
+            timeout_cm = asyncio.timeout(60) if sys.version_info >= (3, 11) else nullcontext()
+            async with timeout_cm:
                 async for kind, data in _stream_agent(input_message, config, thread_id):
                     if kind == "event":
                         yield f"data: {data}\n\n"
@@ -197,7 +206,8 @@ async def stream_response(message: str, thread_id: str):
             if is_rate_limit and attempt < max_retries:
                 wait = (attempt + 1) * 5  # 5s, 10s
                 logger.warning(f"[{thread_id[:8]}] Rate limit (attempt {attempt + 1}/{max_retries}), retrying in {wait}s")
-                yield f"data: {json.dumps({'type': 'content', 'content': '\n\n*One moment, gathering my thoughts...*\n\n', 'thread_id': thread_id})}\n\n"
+                cold_payload = json.dumps({"type": "content", "content": "\n\n*One moment, gathering my thoughts...*\n\n", "thread_id": thread_id})
+                yield f"data: {cold_payload}\n\n"
                 await asyncio.sleep(wait)
                 continue
 
@@ -214,20 +224,54 @@ async def stream_response(message: str, thread_id: str):
     yield f"data: {json.dumps({'type': 'done', 'thread_id': thread_id})}\n\n"
 
 
-@app.post("/chat")
-async def chat(request: ChatRequest):
-    thread_id = request.thread_id or str(uuid.uuid4())
+def _client_ip(http_request: Request) -> str:
+    xff = http_request.headers.get("x-forwarded-for", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return http_request.client.host if http_request.client else ""
 
-    asyncio.create_task(notify_new_question(request.message, thread_id))
+
+_SSE_HEADERS = {
+    "Cache-Control": "no-cache",
+    "Connection": "keep-alive",
+    "X-Accel-Buffering": "no",
+}
+
+
+async def _stream_rate_limited(message: str, thread_id: str):
+    """Emit a single content event with the denial message, then done."""
+    yield f"data: {json.dumps({'type': 'content', 'content': message, 'thread_id': thread_id})}\n\n"
+    yield f"data: {json.dumps({'type': 'done', 'thread_id': thread_id})}\n\n"
+
+
+@app.post("/chat")
+async def chat(request: ChatRequest, http_request: Request):
+    thread_id = request.thread_id or str(uuid.uuid4())
+    client_ip = _client_ip(http_request)
+
+    if settings.RATE_LIMIT_ENABLED:
+        allowed, reason = await rate_limiter.check(client_ip)
+        if not allowed:
+            logger.warning(f"[{thread_id[:8]}] Rate limited: ip={client_ip} reason={reason}")
+            return StreamingResponse(
+                _stream_rate_limited(reason, thread_id),
+                media_type="text/event-stream",
+                headers=_SSE_HEADERS,
+            )
+
+    asyncio.create_task(notify_new_question(
+        request.message,
+        thread_id,
+        client_ip=client_ip,
+        user_agent=http_request.headers.get("user-agent", ""),
+        referer=http_request.headers.get("referer", ""),
+        accept_language=http_request.headers.get("accept-language", ""),
+    ))
 
     return StreamingResponse(
         stream_response(request.message, thread_id),
         media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",
-        },
+        headers=_SSE_HEADERS,
     )
 
 
