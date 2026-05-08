@@ -103,27 +103,7 @@ Work Experience:
    - Fintech POS apps for 5+ banks
 """
 
-PROJECTS = """
-Project 1 — CNN-Generated Image Detection (FAU, Nov 2022–Mar 2023):
-Universal detector to distinguish real vs CNN-generated images from 11 different generator models. Reproduced results from S. Wang et al. paper. Used ResNet50 and GoogleNet trained on ImageNet with PyTorch. Evaluated with Accuracy and Average Precision metrics.
-
-Project 2 — Dynamic Form Library (Citytech, Oct 2019–Feb 2020):
-Library to generate dynamic forms from JSON via API at runtime. Single-screen and multi-screen forms (ViewPager). Custom layouts for TextView, EditText, Checkbox, RadioButtons, Image, Map, Signature fields. Observer pattern with EventBus.
-
-Project 3 — MLOps End-to-End:
-Gemstone price prediction using LinearRegression, Ridge, Lasso, RandomForest — 98% accuracy. Full MLOps: scikit-learn, Docker, MLflow, Airflow, DVC, CI/CD, GitHub, DagsHub, Azure.
-
-Project 4 — Dimensionality Reduction using Deep Learning (MANIT):
-Autoencoder models for Big Data dimensionality reduction. Combined t-SNE with autoencoder to minimize reconstruction loss.
-
-Project 5 — Wind Energy Forecasting (MANIT):
-ARIMA modeling of long time series in MATLAB. Autocorrelation and non-stationarity detection in pre-whitened time series.
-
-Project 6 — Cracked Windows Image Recognition (FAU, Jun–Jul 2022):
-Classification of cracked window images using PyTorch/CNN. F-Score 0.65.
-"""
-
-SKILLS = """
+SKILLS ="""
 Skills (categorized):
 
 AI/ML: LangGraph, LangChain, LangSmith, RAG, pgvector, Cohere, PyTorch, YOLO, Transformers, OpenCV, Multi-Agent Systems
@@ -157,4 +137,40 @@ Email: dhirajpoddar@outlook.com
 LinkedIn: linkedin.com/in/dhiraj-poddar/
 GitHub: github.com/dhirajpodar
 Location: Ingolstadt, Germany
+"""
+
+STORIES = {
+    "hybrid_rag": """\
+Tough problem from MAiQ — making retrieval actually work on real customer documents, not toy ones.
+
+Naive vector search held up on small text chunks but fell apart on two things: large documents (long context, lots of near-duplicates pulling each other up the ranking) and engineering drawings (visual structure that doesn't survive a plain text embedding). So I stopped treating retrieval as one pipeline. We split ingestion into per-document-type workers — drawings get their own extraction and chunking path, long documents get a different one — and then hybrid retrieval on top: BM25 for exact-term matches like part numbers and acronyms, pgvector for semantic, fused and reranked with Cohere.
+
+The hardest piece was the reranker tuning and the eval loop around it. Rerank is a knob you can spin forever if your eval set isn't honest, so I spent real time building an eval set from actual customer queries and grading retrievals manually. Without that you're just A/B-testing vibes. Once the eval was trustworthy, the rerank weights basically tuned themselves.
+""",
+
+    "customer_ship": """\
+The one I'm proudest of: I shipped a production AI agent end-to-end for an external customer. It's a natural-language interface over a worldwide commodity pricing dataset — silver, gold, propane, that kind of feed. Users can ask things like "what's silver doing this week vs. last month" and get a real answer backed by the underlying data, not a hallucinated number.
+
+The customer brought the data APIs; my job was the plumbing and the agent. I built the ingest pipeline that pulls and normalizes feeds from their providers into a queryable shape, wired up third-party OAuth so users log in with an identity they already have, and designed the agent to call the right pricing tools instead of trying to recall numbers from its weights.
+
+What I took away from it: the agent itself is maybe 20% of the work. The other 80% is the data path, the auth story, and the boring operational stuff that makes the thing not embarrass you on day one in production.
+""",
+}
+
+AVAILABILITY = """\
+Availability:
+
+Yes — open to new roles. Remote or hybrid, anywhere in Germany.
+Currently at Maindtec but exploring what's next.
+EU work authorization, so visa isn't a blocker.
+
+Best way to reach me: email (dhirajpoddar@outlook.com) or LinkedIn.
+"""
+
+WHATS_NEXT = """\
+What's next / what excites me:
+
+What pulls me forward isn't a specific technology — it's the team and the ambition. I want to work with people who have a hustling, builder mindset and are trying to ship something that actually impacts the real world. Less interested in incrementalism, more interested in "this didn't exist before, now it does, and people are using it."
+
+On the tech side, agentic AI is where I want to keep going deeper — production-grade orchestration, retrieval that holds up on messy real-world data, and the operational craft of making these systems reliable enough that users trust them.
 """
