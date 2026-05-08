@@ -3,7 +3,6 @@ export type SSEEvent =
   | { type: "tool_start"; tool: string; thread_id: string }
   | { type: "tool_end"; tool: string; preview: string; thread_id: string }
   | { type: "content"; content: string; thread_id: string }
-  | { type: "followups"; questions: string[]; thread_id: string }
   | { type: "error"; error: string; thread_id: string }
   | { type: "done"; thread_id: string };
 

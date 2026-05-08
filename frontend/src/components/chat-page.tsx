@@ -25,7 +25,6 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
     isStreaming,
     error,
     coldStartMsg,
-    followUps,
     messagesEndRef,
     sendMessage,
     handleRetry,
@@ -138,33 +137,6 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
           </div>
         ))}
 
-        {/* Follow-up suggestions */}
-        {followUps.length > 0 && !isStreaming && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-wrap gap-2 pt-2"
-          >
-            {followUps.map((q) => (
-              <motion.button
-                key={q}
-                whileHover={{
-                  boxShadow: "0 0 4px rgba(168, 164, 255, 0.1)",
-                }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => sendMessage(q)}
-                className="rounded-full px-4 py-2 text-xs transition-colors cursor-pointer"
-                style={{
-                  backgroundColor: "#201f1f",
-                  color: "#adaaaa",
-                }}
-              >
-                {q}
-              </motion.button>
-            ))}
-          </motion.div>
-        )}
 
         {coldStartMsg && (
           <div className="text-center">
