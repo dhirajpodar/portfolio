@@ -284,7 +284,9 @@ export default function ChatWidget() {
                       color: "#e2e8f0",
                     }}
                   >
-                    {msg.content}
+                    {msg.role === "assistant"
+                      ? msg.content.replace(/<!--\s*followups:[\s\S]*?-->/g, "").trim()
+                      : msg.content}
                     {/* Typing indicator for empty assistant message */}
                     {msg.role === "assistant" && !msg.content && isStreaming && (
                       <span className="inline-flex items-center gap-1">
