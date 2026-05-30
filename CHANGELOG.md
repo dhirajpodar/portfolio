@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Generated automatically from release notes on each tagged release.
 
+## [1.1.0] - 2026-05-30
+
+## What's Changed
+* fix: stream no-tool greetings inline instead of in the thinking panel by @dhirajpodar in https://github.com/dhirajpodar/portfolio/pull/30
+* feat: expose the model's chain-of-thought in the thinking panel by @dhirajpodar in https://github.com/dhirajpodar/portfolio/pull/32
+* chore: auto-generate CHANGELOG.md on each release by @dhirajpodar in https://github.com/dhirajpodar/portfolio/pull/31
+* fix: keep chain-of-thought working across the fallback chain by @dhirajpodar in https://github.com/dhirajpodar/portfolio/pull/33
+* Release: chain-of-thought exposure + fallback reliability by @dhirajpodar in https://github.com/dhirajpodar/portfolio/pull/34
+
+
+**Full Changelog**: https://github.com/dhirajpodar/portfolio/compare/v1.0.0...v1.1.0
+
 ## [1.0.0] - 2026-05-30
 
 First production release.
