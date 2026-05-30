@@ -28,3 +28,40 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "${GITHUB_REF_NAME}" --generate-notes --verify-tag
+
+      - name: Update CHANGELOG.md on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          date="$(date +%Y-%m-%d)"
+          notes="$(gh release view "${GITHUB_REF_NAME}" --json body -q .body)"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B main origin/main
+
+          # Preserve existing version sections (everything from the first entry on).
+          existing=""
+          if [ -f CHANGELOG.md ]; then
+            existing="$(awk '/^## \[/{f=1} f' CHANGELOG.md)"
+          fi
+
+          {
+            printf '# Changelog\n\n'
+            printf 'All notable changes to this project are documented here.\n'
+            printf 'Generated automatically from release notes on each tagged release.\n\n'
+            printf '## [%s] - %s\n\n' "$version" "$date"
+            printf '%s\n\n' "$notes"
+            printf '%s' "$existing"
+          } > CHANGELOG.md
+
+          if git diff --quiet -- CHANGELOG.md; then
+            echo "CHANGELOG.md already up to date."
+            exit 0
+          fi
+
+          git add CHANGELOG.md
+          git commit -m "docs: update changelog for ${GITHUB_REF_NAME} [skip ci]"
+          git push origin main
