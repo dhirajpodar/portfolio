@@ -122,7 +122,9 @@ def _split_reasoning(event):
     Chain-of-thought arrives on a separate channel depending on the provider:
     Groq (reasoning_format="parsed") puts it in additional_kwargs
     ["reasoning_content"]; Gemini (include_thoughts=True) returns it as content
-    blocks flagged thought=True. The answer is the remaining plain-text content.
+    blocks flagged thought=True; OpenAI (responses API) returns a "reasoning"
+    block whose text lives in a `summary` list. The answer is the remaining
+    plain-text content.
     """
     reasoning = ""
     answer = ""
@@ -144,6 +146,14 @@ def _split_reasoning(event):
                     "thinking",
                     "reasoning",
                 )
+                # OpenAI responses API: reasoning text lives in a summary list.
+                summary = block.get("summary")
+                if isinstance(summary, list):
+                    for part in summary:
+                        if isinstance(part, dict) and isinstance(part.get("text"), str):
+                            reasoning += part["text"]
+                        elif isinstance(part, str):
+                            reasoning += part
                 text = (
                     block.get("text")
                     or block.get("thinking")
