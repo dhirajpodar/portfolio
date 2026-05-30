@@ -126,6 +126,8 @@ async def _stream_agent(input_message, config, thread_id):
     has_emitted_thinking = False
     tool_count = 0
     chunk_count = 0
+    in_answer = False  # flips True after the first tool result; until then,
+    # any model text is reasoning/narration, not the final answer
 
     logger.info(f"[{thread_id[:8]}] Agent stream started")
 
@@ -154,16 +156,24 @@ async def _stream_agent(input_message, config, thread_id):
                             event_data["args"] = args if isinstance(args, str) else json.dumps(args)
                         yield "event", json.dumps(event_data)
             elif event.content:
-                # Stream every content chunk live. Any text emitted before a
-                # tool call (reasoning preamble) is discarded client-side when
-                # the "thinking" event fires, so it never lingers in the answer.
+                # Stream every chunk live. Text before the first tool result is
+                # the model's reasoning/narration ("let me check ...") and is
+                # tagged as "reasoning" so the client can show it in a separate
+                # thinking panel. Everything after a tool result is the answer.
                 chunk_count += 1
-                full_content += event.content
-                yield "event", json.dumps({
-                    "type": "content",
-                    "content": event.content,
-                    "thread_id": thread_id,
-                })
+                if in_answer:
+                    full_content += event.content
+                    yield "event", json.dumps({
+                        "type": "content",
+                        "content": event.content,
+                        "thread_id": thread_id,
+                    })
+                else:
+                    yield "event", json.dumps({
+                        "type": "reasoning",
+                        "content": event.content,
+                        "thread_id": thread_id,
+                    })
 
             # Log finish reason and token usage if present
             if hasattr(event, "response_metadata") and event.response_metadata:
@@ -175,6 +185,7 @@ async def _stream_agent(input_message, config, thread_id):
                     logger.info(f"[{thread_id[:8]}] Tokens: {usage}")
 
         elif msg_type == "ToolMessage":
+            in_answer = True  # tools have run; subsequent text is the answer
             output = str(event.content)
             preview = output[:150] + "..." if len(output) > 150 else output
             logger.info(f"[{thread_id[:8]}] Tool result: {event.name} ({len(output)} chars)")
