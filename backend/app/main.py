@@ -116,6 +116,59 @@ async def _agent_stream(input_message, config):
         stop.set()
 
 
+def _split_reasoning(event):
+    """Split an AIMessage(Chunk) into (reasoning_text, answer_text).
+
+    Chain-of-thought arrives on a separate channel depending on the provider:
+    Groq (reasoning_format="parsed") puts it in additional_kwargs
+    ["reasoning_content"]; Gemini (include_thoughts=True) returns it as content
+    blocks flagged thought=True; OpenAI (responses API) returns a "reasoning"
+    block whose text lives in a `summary` list. The answer is the remaining
+    plain-text content.
+    """
+    reasoning = ""
+    answer = ""
+
+    ak = getattr(event, "additional_kwargs", None) or {}
+    rc = ak.get("reasoning_content") or ak.get("reasoning")
+    if isinstance(rc, str):
+        reasoning += rc
+
+    content = event.content
+    if isinstance(content, str):
+        answer += content
+    elif isinstance(content, list):
+        for block in content:
+            if isinstance(block, str):
+                answer += block
+            elif isinstance(block, dict):
+                is_thought = bool(block.get("thought")) or block.get("type") in (
+                    "thinking",
+                    "reasoning",
+                )
+                # OpenAI responses API: reasoning text lives in a summary list.
+                summary = block.get("summary")
+                if isinstance(summary, list):
+                    for part in summary:
+                        if isinstance(part, dict) and isinstance(part.get("text"), str):
+                            reasoning += part["text"]
+                        elif isinstance(part, str):
+                            reasoning += part
+                text = (
+                    block.get("text")
+                    or block.get("thinking")
+                    or block.get("reasoning")
+                    or ""
+                )
+                if not isinstance(text, str):
+                    text = ""
+                if is_thought:
+                    reasoning += text
+                else:
+                    answer += text
+    return reasoning, answer
+
+
 async def _stream_agent(input_message, config, thread_id):
     """Yield SSE events from a single agent stream.
 
@@ -126,8 +179,6 @@ async def _stream_agent(input_message, config, thread_id):
     has_emitted_thinking = False
     tool_count = 0
     chunk_count = 0
-    in_answer = False  # flips True after the first tool result; until then,
-    # any model text is reasoning/narration, not the final answer
 
     logger.info(f"[{thread_id[:8]}] Agent stream started")
 
@@ -155,25 +206,25 @@ async def _stream_agent(input_message, config, thread_id):
                             args = tc.get("args", "") if isinstance(tc, dict) else getattr(tc, "args", "")
                             event_data["args"] = args if isinstance(args, str) else json.dumps(args)
                         yield "event", json.dumps(event_data)
-            elif event.content:
-                # Stream every chunk live. Text before the first tool result is
-                # the model's reasoning/narration ("let me check ...") and is
-                # tagged as "reasoning" so the client can show it in a separate
-                # thinking panel. Everything after a tool result is the answer.
+
+            # Real chain-of-thought streams on a separate channel; the answer is
+            # the plain content. Emit each independently so the client renders
+            # reasoning in the thinking panel and content as the answer.
+            reasoning_text, answer_text = _split_reasoning(event)
+            if reasoning_text:
+                yield "event", json.dumps({
+                    "type": "reasoning",
+                    "content": reasoning_text,
+                    "thread_id": thread_id,
+                })
+            if answer_text:
                 chunk_count += 1
-                if in_answer:
-                    full_content += event.content
-                    yield "event", json.dumps({
-                        "type": "content",
-                        "content": event.content,
-                        "thread_id": thread_id,
-                    })
-                else:
-                    yield "event", json.dumps({
-                        "type": "reasoning",
-                        "content": event.content,
-                        "thread_id": thread_id,
-                    })
+                full_content += answer_text
+                yield "event", json.dumps({
+                    "type": "content",
+                    "content": answer_text,
+                    "thread_id": thread_id,
+                })
 
             # Log finish reason and token usage if present
             if hasattr(event, "response_metadata") and event.response_metadata:
@@ -185,7 +236,6 @@ async def _stream_agent(input_message, config, thread_id):
                     logger.info(f"[{thread_id[:8]}] Tokens: {usage}")
 
         elif msg_type == "ToolMessage":
-            in_answer = True  # tools have run; subsequent text is the answer
             output = str(event.content)
             preview = output[:150] + "..." if len(output) > 150 else output
             logger.info(f"[{thread_id[:8]}] Tool result: {event.name} ({len(output)} chars)")

@@ -172,26 +172,39 @@ memory = MemorySaver()
 # max_retries=0: on a 429 the Gemini client would otherwise burn ~33s of
 # internal exponential backoff before raising. We want it to fail fast so
 # ModelFallbackMiddleware can switch to Groq in ~0.2s instead.
+# include_thoughts + a low thinking_budget exposes a capped chain-of-thought
+# (thought summaries) that the frontend renders in the thinking panel.
 primary_llm = ChatGoogleGenerativeAI(
     google_api_key=settings.GEMINI_API_KEY,
     model=settings.MODEL_NAME,
     temperature=0.5,
     max_output_tokens=8192,
     max_retries=0,
+    include_thoughts=True,
+    thinking_budget=512,
 )
 
 # Fallback 1: Groq Qwen3-32B (60 RPM, 500K TPD)
 # max_retries=0 for the same reason: rate-limited Groq should fall through to
 # OpenAI immediately rather than retrying.
+# reasoning_format="parsed" moves the model's <think> reasoning out of the
+# answer and into a separate reasoning_content channel we stream to the panel.
 groq_fallback_llm = ChatGroq(
     api_key=settings.GROQ_API_KEY,
     model="qwen/qwen3-32b",
     temperature=0.5,
-    max_tokens=4096,
+    # Groq free tier caps a request at 6000 TPM and counts max_tokens toward it.
+    # With ~2.4k fixed overhead (system prompt + tool defs), 4096 reserved output
+    # pushed every request over the limit (413). 2048 leaves room for tool
+    # results while still fitting the reasoning + answer.
+    max_tokens=2048,
     max_retries=0,
+    reasoning_format="parsed",
 )
 
 # Fallback 2: OpenAI (paid, used when Gemini and Groq are both rate-limited)
+# use_responses_api + reasoning summary exposes a capped chain-of-thought so
+# the thinking panel still works when the chain falls through to OpenAI.
 fallbacks: list = [groq_fallback_llm]
 if settings.OPENAI_API_KEY:
     fallbacks.append(
@@ -200,6 +213,8 @@ if settings.OPENAI_API_KEY:
             model=settings.OPENAI_MODEL,
             temperature=0.5,
             max_tokens=4096,
+            use_responses_api=True,
+            reasoning={"effort": "low", "summary": "auto"},
         )
     )
 

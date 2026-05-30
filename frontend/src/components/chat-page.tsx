@@ -118,15 +118,16 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
                   const activeStreaming = isStreaming && isLast;
                   // Live steps for the streaming message; persisted steps after.
                   const steps = activeStreaming ? agentSteps : msg.agentSteps ?? [];
-                  // Show the thinking panel whenever the agent used tools. A
-                  // no-tool greeting has no steps (its reasoning is promoted to
-                  // the answer at `done`), so it stays a plain reply.
                   const hasToolActivity = steps.some(
                     (s) =>
                       s.type === "thinking" ||
                       s.type === "tool_start" ||
                       s.type === "tool_end"
                   );
+                  // The thinking panel is for tool-using replies. The answer is
+                  // always the `content` channel — never render reasoning as the
+                  // answer (it would flash raw chain-of-thought before the real
+                  // reply arrives). No-tool greetings just show dots then answer.
                   const showThinking = hasToolActivity;
                   const showDots = activeStreaming && !msg.content && !showThinking;
                   return (
