@@ -1,5 +1,6 @@
 import asyncio
 import sys
+import threading
 from contextlib import asynccontextmanager, nullcontext
 import json
 import logging
@@ -70,34 +71,73 @@ async def health():
     return {"status": "ok"}
 
 
-async def _stream_agent(input_message, config, thread_id):
-    """Yield SSE events from a single agent.astream() call.
+_STREAM_DONE = object()
 
-    Handles both AIMessageChunk (streaming/create_react_agent) and
-    AIMessage (non-streaming/create_agent) event types.
+
+async def _agent_stream(input_message, config):
+    """Async wrapper over the agent's *sync* .stream().
+
+    create_agent's async .astream() does not emit token chunks in
+    langchain 1.2 (returns one AIMessage per response — see langchain
+    issue #34017). Its sync .stream() streams AIMessageChunk correctly,
+    so we run it in a worker thread and hand chunks back to the event
+    loop. Yields (event, metadata) tuples, same shape as .astream().
+    """
+    loop = asyncio.get_running_loop()
+    queue: asyncio.Queue = asyncio.Queue()
+    stop = threading.Event()
+
+    def _produce():
+        try:
+            for chunk in agent.stream(
+                input_message, config=config, stream_mode="messages"
+            ):
+                if stop.is_set():  # consumer gone (timeout/disconnect) — bail
+                    return
+                loop.call_soon_threadsafe(queue.put_nowait, chunk)
+        except Exception as exc:  # surface to the consumer, don't swallow
+            loop.call_soon_threadsafe(queue.put_nowait, exc)
+        finally:
+            loop.call_soon_threadsafe(queue.put_nowait, _STREAM_DONE)
+
+    threading.Thread(target=_produce, daemon=True).start()
+
+    try:
+        while True:
+            item = await queue.get()
+            if item is _STREAM_DONE:
+                break
+            if isinstance(item, Exception):
+                raise item
+            yield item
+    finally:
+        # On timeout/cancellation, signal the worker to stop at the next chunk
+        # instead of draining the whole response into an unread queue.
+        stop.set()
+
+
+async def _stream_agent(input_message, config, thread_id):
+    """Yield SSE events from a single agent stream.
+
+    Handles both AIMessageChunk (streaming) and AIMessage
+    (non-streaming) event types.
     """
     full_content = ""
     has_emitted_thinking = False
     tool_count = 0
     chunk_count = 0
-    pending_content = ""
-    any_tool_seen = False
+    in_answer = False  # flips True after the first tool result; until then,
+    # any model text is reasoning/narration, not the final answer
 
     logger.info(f"[{thread_id[:8]}] Agent stream started")
 
-    async for event, metadata in agent.astream(
-        input_message, config=config, stream_mode="messages"
-    ):
+    async for event, metadata in _agent_stream(input_message, config):
         msg_type = type(event).__name__
 
         if msg_type in ("AIMessageChunk", "AIMessage"):
             # Handle tool calls: chunks use tool_call_chunks, full messages use tool_calls
             tool_items = getattr(event, "tool_call_chunks", None) or getattr(event, "tool_calls", None) or []
             if tool_items:
-                any_tool_seen = True
-                if pending_content:
-                    logger.info(f"[{thread_id[:8]}] Discarding pre-tool thinking ({len(pending_content)} chars)")
-                    pending_content = ""
                 if not has_emitted_thinking:
                     yield "event", json.dumps({"type": "thinking", "thread_id": thread_id})
                     has_emitted_thinking = True
@@ -116,8 +156,12 @@ async def _stream_agent(input_message, config, thread_id):
                             event_data["args"] = args if isinstance(args, str) else json.dumps(args)
                         yield "event", json.dumps(event_data)
             elif event.content:
-                if any_tool_seen:
-                    chunk_count += 1
+                # Stream every chunk live. Text before the first tool result is
+                # the model's reasoning/narration ("let me check ...") and is
+                # tagged as "reasoning" so the client can show it in a separate
+                # thinking panel. Everything after a tool result is the answer.
+                chunk_count += 1
+                if in_answer:
                     full_content += event.content
                     yield "event", json.dumps({
                         "type": "content",
@@ -125,7 +169,11 @@ async def _stream_agent(input_message, config, thread_id):
                         "thread_id": thread_id,
                     })
                 else:
-                    pending_content += event.content
+                    yield "event", json.dumps({
+                        "type": "reasoning",
+                        "content": event.content,
+                        "thread_id": thread_id,
+                    })
 
             # Log finish reason and token usage if present
             if hasattr(event, "response_metadata") and event.response_metadata:
@@ -137,6 +185,7 @@ async def _stream_agent(input_message, config, thread_id):
                     logger.info(f"[{thread_id[:8]}] Tokens: {usage}")
 
         elif msg_type == "ToolMessage":
+            in_answer = True  # tools have run; subsequent text is the answer
             output = str(event.content)
             preview = output[:150] + "..." if len(output) > 150 else output
             logger.info(f"[{thread_id[:8]}] Tool result: {event.name} ({len(output)} chars)")
@@ -146,15 +195,6 @@ async def _stream_agent(input_message, config, thread_id):
                 "preview": preview,
                 "thread_id": thread_id,
             })
-
-    # If no tools were called, the buffered content IS the direct response
-    if pending_content and not any_tool_seen:
-        full_content = pending_content
-        yield "event", json.dumps({
-            "type": "content",
-            "content": pending_content,
-            "thread_id": thread_id,
-        })
 
     logger.info(f"[{thread_id[:8]}] Stream complete: {chunk_count} chunks, {tool_count} tools, {len(full_content)} chars")
     yield "content", full_content

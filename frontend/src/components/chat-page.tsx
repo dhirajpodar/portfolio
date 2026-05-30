@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useChatContext } from "@/lib/chat-context";
+import ThinkingBlock from "./thinking-block";
 
 const FALLBACK_QUESTIONS = [
   "What have you built with AI agents?",
@@ -28,6 +29,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
     messagesEndRef,
     sendMessage,
     handleRetry,
+    agentSteps,
   } = useChatContext();
 
   useEffect(() => {
@@ -111,10 +113,35 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
                   {msg.content}
                 </div>
               ) : (
+                (() => {
+                  const isLast = i === messages.length - 1;
+                  const activeStreaming = isStreaming && isLast;
+                  // Live steps for the streaming message; persisted steps after.
+                  const steps = activeStreaming ? agentSteps : msg.agentSteps ?? [];
+                  // Show the thinking panel whenever the agent used tools. A
+                  // no-tool greeting has no steps (its reasoning is promoted to
+                  // the answer at `done`), so it stays a plain reply.
+                  const hasToolActivity = steps.some(
+                    (s) =>
+                      s.type === "thinking" ||
+                      s.type === "tool_start" ||
+                      s.type === "tool_end"
+                  );
+                  const showThinking = hasToolActivity;
+                  const showDots = activeStreaming && !msg.content && !showThinking;
+                  return (
                 <div className="max-w-[85%] chat-markdown" style={{ color: "#adaaaa" }}>
+                  {showThinking && (
+                    <ThinkingBlock
+                      reasoning={msg.reasoning}
+                      steps={steps}
+                      streaming={activeStreaming && !msg.content}
+                      answerStarted={!!msg.content}
+                    />
+                  )}
                   {msg.content ? (
                     <ReactMarkdown>{msg.content.replace(/<!--\s*followups:[\s\S]*?-->/g, "").trim()}</ReactMarkdown>
-                  ) : isStreaming ? (
+                  ) : showDots ? (
                     <span className="inline-flex items-center gap-1">
                       <span
                         className="inline-block h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce"
@@ -131,6 +158,8 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
                     </span>
                   ) : null}
                 </div>
+                  );
+                })()
               )}
             </div>
 

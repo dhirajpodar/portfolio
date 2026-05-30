@@ -2,6 +2,7 @@ export type SSEEvent =
   | { type: "thinking"; thread_id: string }
   | { type: "tool_start"; tool: string; thread_id: string }
   | { type: "tool_end"; tool: string; preview: string; thread_id: string }
+  | { type: "reasoning"; content: string; thread_id: string }
   | { type: "content"; content: string; thread_id: string }
   | { type: "error"; error: string; thread_id: string }
   | { type: "done"; thread_id: string };
