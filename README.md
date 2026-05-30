@@ -74,6 +74,18 @@ npm run dev
 docker compose up --build
 ```
 
+## Releasing
+
+Releases are automated with [release-please](https://github.com/googleapis/release-please-action) and driven by [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `fix:` → patch bump (e.g. `1.1.0` → `1.1.1`)
+- `feat:` → minor bump (e.g. `1.1.0` → `1.2.0`)
+- `feat!:` / `BREAKING CHANGE:` → major bump
+
+On every push to `main`, release-please opens (and keeps updated) a **"Release vX.Y.Z" PR** that bumps `version.txt`, `frontend/package.json`, `backend/pyproject.toml`, and `CHANGELOG.md`. **Merging that PR** creates the git tag and GitHub release automatically — no manual tagging.
+
+Commits like `docs:`/`chore:`/`ci:` don't trigger a release.
+
 ## How PageIndex Works
 
 Traditional RAG uses vector similarity search. PageIndex replaces this with **reasoning-based tree-search**:

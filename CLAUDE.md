@@ -44,4 +44,5 @@ docker compose up --build
 - Never add `litellm` or `pyyaml` to `pyproject.toml`
 - Rebuild PageIndex indexes: `cd backend && python3 scripts/build_index.py`
 - Model for ChatGoogleGenerativeAI: plain name (e.g. `gemini-2.5-flash-lite`). Model for LiteLLM: WITH `groq/` prefix
+- Releases are automated via release-please — use Conventional Commit prefixes (`feat:`/`fix:`/`feat!:`); never manually `git tag`. Merge the bot's "Release vX.Y.Z" PR to publish. See README "Releasing"
 - Do not include "Generated with Claude Code" or any Claude Code references in commit messages or PR descriptions
