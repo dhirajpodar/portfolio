@@ -118,17 +118,21 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
                   const activeStreaming = isStreaming && isLast;
                   // Live steps for the streaming message; persisted steps after.
                   const steps = activeStreaming ? agentSteps : msg.agentSteps ?? [];
-                  // Show the thinking panel whenever the agent used tools. A
-                  // no-tool greeting has no steps (its reasoning is promoted to
-                  // the answer at `done`), so it stays a plain reply.
                   const hasToolActivity = steps.some(
                     (s) =>
                       s.type === "thinking" ||
                       s.type === "tool_start" ||
                       s.type === "tool_end"
                   );
+                  // The thinking panel is only for tool-using replies. A no-tool
+                  // reply (greeting/chitchat) streams its text as `reasoning`,
+                  // since no tool ever flips the backend into answer mode — so
+                  // treat that reasoning as the live answer and stream it inline
+                  // rather than hiding it in a "Thinking…" panel.
                   const showThinking = hasToolActivity;
-                  const showDots = activeStreaming && !msg.content && !showThinking;
+                  const liveAnswer =
+                    msg.content || (!hasToolActivity ? msg.reasoning ?? "" : "");
+                  const showDots = activeStreaming && !liveAnswer && !showThinking;
                   return (
                 <div className="max-w-[85%] chat-markdown" style={{ color: "#adaaaa" }}>
                   {showThinking && (
@@ -139,8 +143,8 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
                       answerStarted={!!msg.content}
                     />
                   )}
-                  {msg.content ? (
-                    <ReactMarkdown>{msg.content.replace(/<!--\s*followups:[\s\S]*?-->/g, "").trim()}</ReactMarkdown>
+                  {liveAnswer ? (
+                    <ReactMarkdown>{liveAnswer.replace(/<!--\s*followups:[\s\S]*?-->/g, "").trim()}</ReactMarkdown>
                   ) : showDots ? (
                     <span className="inline-flex items-center gap-1">
                       <span
