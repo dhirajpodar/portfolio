@@ -181,23 +181,13 @@ export function useChat() {
                   const updated = [...prev];
                   const last = updated[updated.length - 1];
                   if (last && last.role === "assistant") {
-                    // No-tool replies (greetings) stream as "reasoning" since
-                    // no tool ever flips the backend into answer mode. If we
-                    // ended with no answer, that reasoning WAS the answer.
-                    let content = last.content;
-                    let reasoning = last.reasoning;
-                    if (!content && reasoning) {
-                      content = reasoning;
-                      reasoning = undefined;
-                    }
-                    const cleaned = content.replace(
+                    const cleaned = last.content.replace(
                       /<!--\s*followups:\s*\[[\s\S]*?\]\s*-->/,
                       ""
                     ).trimEnd();
                     updated[updated.length - 1] = {
                       ...last,
                       content: cleaned,
-                      reasoning,
                       agentSteps: [...collectedSteps],
                     };
                   }

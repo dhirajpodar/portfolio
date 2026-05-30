@@ -124,15 +124,12 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
                       s.type === "tool_start" ||
                       s.type === "tool_end"
                   );
-                  // The thinking panel is only for tool-using replies. A no-tool
-                  // reply (greeting/chitchat) streams its text as `reasoning`,
-                  // since no tool ever flips the backend into answer mode — so
-                  // treat that reasoning as the live answer and stream it inline
-                  // rather than hiding it in a "Thinking…" panel.
+                  // The thinking panel is for tool-using replies. The answer is
+                  // always the `content` channel — never render reasoning as the
+                  // answer (it would flash raw chain-of-thought before the real
+                  // reply arrives). No-tool greetings just show dots then answer.
                   const showThinking = hasToolActivity;
-                  const liveAnswer =
-                    msg.content || (!hasToolActivity ? msg.reasoning ?? "" : "");
-                  const showDots = activeStreaming && !liveAnswer && !showThinking;
+                  const showDots = activeStreaming && !msg.content && !showThinking;
                   return (
                 <div className="max-w-[85%] chat-markdown" style={{ color: "#adaaaa" }}>
                   {showThinking && (
@@ -143,8 +140,8 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
                       answerStarted={!!msg.content}
                     />
                   )}
-                  {liveAnswer ? (
-                    <ReactMarkdown>{liveAnswer.replace(/<!--\s*followups:[\s\S]*?-->/g, "").trim()}</ReactMarkdown>
+                  {msg.content ? (
+                    <ReactMarkdown>{msg.content.replace(/<!--\s*followups:[\s\S]*?-->/g, "").trim()}</ReactMarkdown>
                   ) : showDots ? (
                     <span className="inline-flex items-center gap-1">
                       <span
