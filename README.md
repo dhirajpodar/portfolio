@@ -74,6 +74,25 @@ npm run dev
 docker compose up --build
 ```
 
+## Deployments
+
+| Service | Host | Trigger |
+|---------|------|---------|
+| Frontend | Vercel | Auto-deploys on push to `main` (Git integration) |
+| Backend | Render | Auto-deploys on push to `main` (Git integration) |
+
+Both platforms are configured to **skip deploys when their folder didn't change**, so a backend-only commit doesn't redeploy the frontend (and vice versa):
+
+- **Vercel** — Settings → Build and Deployment → Root Directory (`frontend`) → **Skip deployment** switch enabled. Skips when nothing under `frontend/` changed.
+- **Render** — Settings → Build & Deploy → **Build Filters** → Included Paths `backend/**`. Deploys only when something under `backend/` changed.
+
+| Commit touches | Frontend | Backend |
+|----------------|----------|---------|
+| `frontend/` only | deploys | skipped |
+| `backend/` only | skipped | deploys |
+| both | deploys | deploys |
+| root config only | skipped | skipped |
+
 ## Releasing
 
 Releases are automated with [release-please](https://github.com/googleapis/release-please-action) and driven by [Conventional Commits](https://www.conventionalcommits.org/):
