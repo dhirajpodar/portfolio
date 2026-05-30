@@ -105,6 +105,24 @@ export function useChat() {
 
             switch (data.type) {
               case "thinking": {
+                // The agent is calling a tool, so any content streamed so far
+                // was reasoning preamble, not the answer. Discard it: clear the
+                // assistant message and drop the premature "generating" step.
+                setMessages((prev) => {
+                  const updated = [...prev];
+                  const last = updated[updated.length - 1];
+                  if (last && last.role === "assistant" && last.content) {
+                    updated[updated.length - 1] = { ...last, content: "" };
+                  }
+                  return updated;
+                });
+                const genIdx = collectedSteps.findIndex(
+                  (s) => s.type === "generating"
+                );
+                if (genIdx !== -1) {
+                  collectedSteps.splice(genIdx, 1);
+                  generatingAdded = false;
+                }
                 const step: AgentStep = {
                   type: "thinking",
                   timestamp: Date.now(),
