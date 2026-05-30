@@ -9,6 +9,7 @@ import {
 export interface Message {
   role: "user" | "assistant";
   content: string;
+  reasoning?: string;
   agentSteps?: AgentStep[];
 }
 
@@ -105,30 +106,28 @@ export function useChat() {
 
             switch (data.type) {
               case "thinking": {
-                // The agent is calling a tool, so any content streamed so far
-                // was reasoning preamble, not the answer. Discard it: clear the
-                // assistant message and drop the premature "generating" step.
-                setMessages((prev) => {
-                  const updated = [...prev];
-                  const last = updated[updated.length - 1];
-                  if (last && last.role === "assistant" && last.content) {
-                    updated[updated.length - 1] = { ...last, content: "" };
-                  }
-                  return updated;
-                });
-                const genIdx = collectedSteps.findIndex(
-                  (s) => s.type === "generating"
-                );
-                if (genIdx !== -1) {
-                  collectedSteps.splice(genIdx, 1);
-                  generatingAdded = false;
-                }
                 const step: AgentStep = {
                   type: "thinking",
                   timestamp: Date.now(),
                 };
                 collectedSteps.push(step);
                 setAgentSteps([...collectedSteps]);
+                break;
+              }
+              case "reasoning": {
+                // Pre-tool narration — stream it into the message's separate
+                // reasoning field, shown in a collapsible "thinking" panel.
+                setMessages((prev) => {
+                  const updated = [...prev];
+                  const last = updated[updated.length - 1];
+                  if (last && last.role === "assistant") {
+                    updated[updated.length - 1] = {
+                      ...last,
+                      reasoning: (last.reasoning ?? "") + data.content,
+                    };
+                  }
+                  return updated;
+                });
                 break;
               }
               case "tool_start": {
@@ -182,13 +181,23 @@ export function useChat() {
                   const updated = [...prev];
                   const last = updated[updated.length - 1];
                   if (last && last.role === "assistant") {
-                    const cleaned = last.content.replace(
+                    // No-tool replies (greetings) stream as "reasoning" since
+                    // no tool ever flips the backend into answer mode. If we
+                    // ended with no answer, that reasoning WAS the answer.
+                    let content = last.content;
+                    let reasoning = last.reasoning;
+                    if (!content && reasoning) {
+                      content = reasoning;
+                      reasoning = undefined;
+                    }
+                    const cleaned = content.replace(
                       /<!--\s*followups:\s*\[[\s\S]*?\]\s*-->/,
                       ""
                     ).trimEnd();
                     updated[updated.length - 1] = {
                       ...last,
                       content: cleaned,
+                      reasoning,
                       agentSteps: [...collectedSteps],
                     };
                   }
