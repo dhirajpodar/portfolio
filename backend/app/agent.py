@@ -169,19 +169,26 @@ tools = [
 memory = MemorySaver()
 
 # Primary: Gemini 2.5 Flash Lite (15 RPM, 1000 RPD, 250K TPM)
+# max_retries=0: on a 429 the Gemini client would otherwise burn ~33s of
+# internal exponential backoff before raising. We want it to fail fast so
+# ModelFallbackMiddleware can switch to Groq in ~0.2s instead.
 primary_llm = ChatGoogleGenerativeAI(
     google_api_key=settings.GEMINI_API_KEY,
     model=settings.MODEL_NAME,
     temperature=0.5,
     max_output_tokens=8192,
+    max_retries=0,
 )
 
 # Fallback 1: Groq Qwen3-32B (60 RPM, 500K TPD)
+# max_retries=0 for the same reason: rate-limited Groq should fall through to
+# OpenAI immediately rather than retrying.
 groq_fallback_llm = ChatGroq(
     api_key=settings.GROQ_API_KEY,
     model="qwen/qwen3-32b",
     temperature=0.5,
     max_tokens=4096,
+    max_retries=0,
 )
 
 # Fallback 2: OpenAI (paid, used when Gemini and Groq are both rate-limited)
