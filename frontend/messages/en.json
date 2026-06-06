@@ -29,11 +29,18 @@
     "retry": "Retry",
     "unavailable": "Chat is currently unavailable",
     "suggested": [
+      "Give me the 30-second version of who you are",
       "What have you built with AI agents?",
+      "What are you building right now?",
+      "What's your tech stack?",
+      "How does the AI on this site actually work?",
+      "Walk me through a tough problem you solved",
       "What do you write about?",
+      "Why should someone hire you?",
+      "What kind of role are you looking for?",
       "What drives you outside of work?",
-      "Are you open to new opportunities?",
-      "Walk me through a tough problem you solved"
+      "What brought you from Nepal to Germany?",
+      "What's your background and experience?"
     ]
   },
   "AgentSteps": {
