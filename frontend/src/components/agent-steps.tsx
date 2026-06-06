@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Brain, Wrench, Check, Sparkles, ChevronDown, Zap } from "lucide-react";
 import type { AgentStep } from "@/lib/agent-events";
 
@@ -20,13 +21,14 @@ function StepNode({
   isActive: boolean;
 }) {
   const [showPreview, setShowPreview] = useState(false);
+  const t = useTranslations("AgentSteps");
 
   const isCurrentlyActive = isLast && isActive;
 
   const config = {
     thinking: {
       icon: <Brain className="h-3.5 w-3.5" />,
-      label: "Thinking",
+      label: t("thinking"),
       bg: "rgba(99, 102, 241, 0.15)",
       border: "rgba(99, 102, 241, 0.3)",
       color: "#818cf8",
@@ -34,7 +36,7 @@ function StepNode({
     },
     tool_start: {
       icon: <Wrench className="h-3.5 w-3.5" />,
-      label: step.tool ?? "Tool",
+      label: step.tool ?? t("tool"),
       bg: "rgba(6, 182, 212, 0.15)",
       border: "rgba(6, 182, 212, 0.3)",
       color: "#22d3ee",
@@ -42,7 +44,7 @@ function StepNode({
     },
     tool_end: {
       icon: <Check className="h-3.5 w-3.5" />,
-      label: step.tool ?? "Tool",
+      label: step.tool ?? t("tool"),
       bg: "rgba(16, 185, 129, 0.15)",
       border: "rgba(16, 185, 129, 0.3)",
       color: "#34d399",
@@ -50,7 +52,7 @@ function StepNode({
     },
     generating: {
       icon: <Sparkles className="h-3.5 w-3.5" />,
-      label: "Generating",
+      label: t("generating"),
       bg: "rgba(139, 92, 246, 0.15)",
       border: "rgba(139, 92, 246, 0.3)",
       color: "#a78bfa",

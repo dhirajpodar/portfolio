@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Clock } from "lucide-react";
 import { fetchBlogPosts, fetchBlogPost } from "@/lib/blog-api";
 import BlogArticle from "@/components/blog/blog-article";
@@ -35,6 +36,7 @@ export default async function BlogPostPage({
 
   const { posts: allPosts } = await fetchBlogPosts();
   const otherPosts = allPosts.filter((p) => p.slug !== slug).slice(0, 2);
+  const t = await getTranslations("Blog");
 
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     month: "long",
@@ -50,7 +52,7 @@ export default async function BlogPostPage({
         className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent-primary transition-colors mb-8"
       >
         <ArrowLeft className="h-4 w-4" strokeWidth={2} />
-        Back to blog
+        {t("backToBlog")}
       </Link>
 
       {/* Header */}

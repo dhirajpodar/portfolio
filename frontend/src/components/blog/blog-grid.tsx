@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import TagFilter from "./tag-filter";
 import BlogCard from "./blog-card";
 import type { BlogPost } from "@/lib/blog-api";
@@ -13,6 +14,7 @@ export default function BlogGrid({
   posts: BlogPost[];
   availableTags: string[];
 }) {
+  const t = useTranslations("Blog");
   const [activeTag, setActiveTag] = useState("All");
   const filtered =
     activeTag === "All"
@@ -48,7 +50,7 @@ export default function BlogGrid({
 
       {filtered.length === 0 && (
         <p className="text-center text-text-muted py-12">
-          No posts found for this tag.
+          {t("noPosts")}
         </p>
       )}
     </div>

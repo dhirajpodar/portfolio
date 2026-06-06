@@ -4,14 +4,23 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Menu, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
 import { useChatContext } from "@/lib/chat-context";
+import LocaleSwitcher from "@/components/locale-switcher";
+
+const NAV_KEYS: Record<string, "chat" | "blog" | "about"> = {
+  "/": "chat",
+  "/blog": "blog",
+  "/about": "about",
+};
 
 export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { resetChat } = useChatContext();
+  const t = useTranslations("Nav");
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -47,9 +56,10 @@ export default function Navigation() {
                       : "text-text-muted hover:text-text-primary"
                   }`}
                 >
-                  {link.label}
+                  {t(NAV_KEYS[link.href])}
                 </Link>
               ))}
+              <LocaleSwitcher />
             </div>
 
             <button
@@ -89,10 +99,11 @@ export default function Navigation() {
                         : "text-text-primary hover:text-accent-primary"
                     }`}
                   >
-                    {link.label}
+                    {t(NAV_KEYS[link.href])}
                   </Link>
                 </motion.div>
               ))}
+              <LocaleSwitcher />
             </div>
           </motion.div>
         )}

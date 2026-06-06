@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import { PERSONAL } from "@/lib/constants";
 
@@ -10,6 +11,8 @@ const fadeUp = {
 };
 
 export default function HeroSection() {
+  const t = useTranslations("Hero");
+
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 sm:px-6">
       <div className="w-full max-w-[750px] text-center">
@@ -43,7 +46,16 @@ export default function HeroSection() {
           transition={{ duration: 0.4, delay: 0.16 }}
           className="mt-8 text-2xl text-text-heading sm:text-3xl"
         >
-          Why read a <span style={{ color: "#a8a4ff" }} className="text-3xl font-bold sm:text-4xl">resume</span> when you can have a <span style={{ color: "#a8a4ff" }} className="text-3xl font-bold sm:text-4xl">conversation</span>?
+          {t.rich("quote", {
+            h: (chunks) => (
+              <span
+                style={{ color: "#a8a4ff" }}
+                className="text-3xl font-bold sm:text-4xl"
+              >
+                {chunks}
+              </span>
+            ),
+          })}
         </motion.p>
 
         {/* CTA */}
@@ -64,7 +76,7 @@ export default function HeroSection() {
               color: "#1e009f",
             }}
           >
-            Chat with my AI &rarr;
+            {t("cta")}
           </button>
         </motion.div>
 
@@ -74,7 +86,7 @@ export default function HeroSection() {
           transition={{ duration: 0.4, delay: 0.32 }}
           className="mt-4 text-sm text-text-muted"
         >
-          Ask about my work, what I&rsquo;ve shipped, or if I&rsquo;m open to opportunities.
+          {t("subtext")}
         </motion.p>
       </div>
 
