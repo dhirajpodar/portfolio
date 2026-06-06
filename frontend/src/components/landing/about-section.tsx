@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Mail, UserRoundSearch, Code, MapPin } from "lucide-react";
 import { PERSONAL } from "@/lib/constants";
 
@@ -33,6 +34,7 @@ const LINKS = [
 ];
 
 export default function AboutSection() {
+  const t = useTranslations("About");
   return (
     <div>
       {/* Photo + Bio */}
@@ -74,7 +76,7 @@ export default function AboutSection() {
         className="mt-12"
       >
         <h3 className="mb-4 font-mono text-xs font-medium uppercase tracking-widest text-text-muted">
-          Get in touch
+          {t("getInTouch")}
         </h3>
         <div className="grid gap-4 sm:grid-cols-2">
           {LINKS.map((link) => (
@@ -108,7 +110,7 @@ export default function AboutSection() {
           >
             <MapPin size={20} className="shrink-0 text-accent-primary" />
             <div>
-              <p className="text-sm font-medium text-text-heading">Location</p>
+              <p className="text-sm font-medium text-text-heading">{t("location")}</p>
               <p className="text-xs text-text-muted">{PERSONAL.location}</p>
             </div>
           </div>

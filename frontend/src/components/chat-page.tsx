@@ -2,22 +2,17 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useChatContext } from "@/lib/chat-context";
 import ThinkingBlock from "./thinking-block";
 
-const FALLBACK_QUESTIONS = [
-  "What have you built with AI agents?",
-  "What do you write about?",
-  "What drives you outside of work?",
-  "Are you open to new opportunities?",
-  "Walk me through a tough problem you solved",
-];
-
 export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
+  const t = useTranslations("Chat");
   const inputRef = useRef<HTMLInputElement>(null);
-  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>(FALLBACK_QUESTIONS);
+  const [fetchedQuestions, setFetchedQuestions] = useState<string[] | null>(null);
+  const suggestedQuestions = fetchedQuestions ?? (t.raw("suggested") as string[]);
 
   const {
     messages,
@@ -37,7 +32,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
     fetch(`${apiUrl}/suggested-questions`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.questions?.length) setSuggestedQuestions(data.questions);
+        if (data.questions?.length) setFetchedQuestions(data.questions);
       })
       .catch(() => {});
   }, []);
@@ -69,12 +64,12 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
               className="text-3xl sm:text-4xl font-bold mb-3 text-text-heading"
               style={{ letterSpacing: "-0.04em" }}
             >
-              {embedded ? "What would you like to know?" : "Hey, I\u2019m Dhiraj"}
+              {embedded ? t("greetingTitleEmbedded") : t("greetingTitleHome")}
             </h1>
             <p className="text-text-muted text-center max-w-md mb-8">
               {embedded
-                ? "Ask about my experience, projects, tech stack, or how I approach problems."
-                : "An AI Engineer. Ask me about my work, how I think, or what I\u2019m building."}
+                ? t("greetingSubtitleEmbedded")
+                : t("greetingSubtitleHome")}
             </p>
 
             <div className="flex flex-wrap justify-center gap-3">
@@ -171,7 +166,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
         {coldStartMsg && (
           <div className="text-center">
             <span className="text-xs italic text-text-muted">
-              Waking up AI...
+              {t("coldStart")}
             </span>
           </div>
         )}
@@ -185,7 +180,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
               className="text-xs rounded-lg px-3 py-1 transition-colors cursor-pointer"
               style={{ backgroundColor: "#201f1f", color: "#a8a4ff" }}
             >
-              Retry
+              {t("retry")}
             </motion.button>
           </div>
         )}
@@ -205,7 +200,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me anything..."
+            placeholder={t("placeholder")}
             disabled={isStreaming}
             className="flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-text-muted disabled:opacity-50"
             style={{ color: "#adaaaa" }}
@@ -216,7 +211,7 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
             disabled={isStreaming || !input.trim()}
             className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors disabled:opacity-30 cursor-pointer"
             style={{ backgroundColor: "#a8a4ff" }}
-            aria-label="Send message"
+            aria-label={t("send")}
           >
             <Send className="h-4 w-4" style={{ color: "#1e009f" }} />
           </motion.button>

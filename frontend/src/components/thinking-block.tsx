@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Brain, Wrench, Check, ChevronDown } from "lucide-react";
 import type { AgentStep } from "@/lib/agent-events";
+
+type ThinkingTranslator = ReturnType<typeof useTranslations<"ThinkingBlock">>;
 
 interface ThinkingBlockProps {
   reasoning?: string;
@@ -14,16 +17,19 @@ interface ThinkingBlockProps {
   answerStarted: boolean;
 }
 
-function stepLabel(step: AgentStep): { icon: React.ReactNode; text: string } {
+function stepLabel(
+  step: AgentStep,
+  t: ThinkingTranslator,
+): { icon: React.ReactNode; text: string } {
   switch (step.type) {
     case "thinking":
-      return { icon: <Brain className="h-3 w-3" />, text: "Thinking" };
+      return { icon: <Brain className="h-3 w-3" />, text: t("thinking") };
     case "tool_start":
-      return { icon: <Wrench className="h-3 w-3" />, text: `Using ${step.tool}` };
+      return { icon: <Wrench className="h-3 w-3" />, text: t("using", { tool: step.tool ?? "" }) };
     case "tool_end":
-      return { icon: <Check className="h-3 w-3" />, text: `Used ${step.tool}` };
+      return { icon: <Check className="h-3 w-3" />, text: t("used", { tool: step.tool ?? "" }) };
     case "generating":
-      return { icon: <Brain className="h-3 w-3" />, text: "Writing answer" };
+      return { icon: <Brain className="h-3 w-3" />, text: t("writingAnswer") };
   }
 }
 
@@ -33,6 +39,7 @@ export default function ThinkingBlock({
   streaming,
   answerStarted,
 }: ThinkingBlockProps) {
+  const t = useTranslations("ThinkingBlock");
   // Default: open while thinking, auto-collapsed once the answer starts.
   // A manual toggle overrides the default and sticks.
   const [userOpen, setUserOpen] = useState<boolean | null>(null);
@@ -54,10 +61,10 @@ export default function ThinkingBlock({
 
   const toolCount = steps.filter((s) => s.type === "tool_end").length;
   const headerText = streaming
-    ? "Thinking…"
+    ? t("headerStreaming")
     : toolCount > 0
-      ? `Thought process · ${toolCount} tool${toolCount !== 1 ? "s" : ""}`
-      : "Thought process";
+      ? t("thoughtProcessTools", { count: toolCount })
+      : t("thoughtProcess");
 
   return (
     <div className="mb-2">
@@ -97,7 +104,7 @@ export default function ThinkingBlock({
               {displaySteps.length > 0 && (
                 <div className="flex flex-col gap-1 py-0.5">
                   {displaySteps.map((step, i) => {
-                    const { icon, text } = stepLabel(step);
+                    const { icon, text } = stepLabel(step, t);
                     return (
                       <div
                         key={`${step.type}-${step.tool ?? ""}-${i}`}

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
 import Navigation from "@/components/navigation";
 import { ChatProvider } from "@/lib/chat-context";
@@ -69,14 +71,16 @@ const jsonLd = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
@@ -86,10 +90,12 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-bg-primary text-text-primary antialiased">
-        <ChatProvider>
-          <Navigation />
-          <main className="pt-16">{children}</main>
-        </ChatProvider>
+        <NextIntlClientProvider>
+          <ChatProvider>
+            <Navigation />
+            <main className="pt-16">{children}</main>
+          </ChatProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
