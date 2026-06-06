@@ -29,11 +29,18 @@
     "retry": "Erneut versuchen",
     "unavailable": "Der Chat ist derzeit nicht verfügbar",
     "suggested": [
+      "Gib mir die 30-Sekunden-Version, wer du bist",
       "Was hast du mit KI-Agenten gebaut?",
+      "Woran arbeitest du gerade?",
+      "Was ist dein Tech-Stack?",
+      "Wie funktioniert die KI auf dieser Seite eigentlich?",
+      "Erkläre mir ein schwieriges Problem, das du gelöst hast",
       "Worüber schreibst du?",
+      "Warum sollte man dich einstellen?",
+      "Welche Art von Rolle suchst du?",
       "Was treibt dich außerhalb der Arbeit an?",
-      "Bist du offen für neue Möglichkeiten?",
-      "Erkläre mir ein schwieriges Problem, das du gelöst hast"
+      "Was hat dich von Nepal nach Deutschland gebracht?",
+      "Was ist dein Hintergrund und deine Erfahrung?"
     ]
   },
   "AgentSteps": {

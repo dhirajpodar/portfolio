@@ -11,8 +11,9 @@ import ThinkingBlock from "./thinking-block";
 export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
   const t = useTranslations("Chat");
   const inputRef = useRef<HTMLInputElement>(null);
-  const [fetchedQuestions, setFetchedQuestions] = useState<string[] | null>(null);
-  const suggestedQuestions = fetchedQuestions ?? (t.raw("suggested") as string[]);
+  const pool = t.raw("suggested") as string[];
+  const poolKey = pool.join("|");
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
 
   const {
     messages,
@@ -27,15 +28,18 @@ export default function ChatPage({ embedded = false }: { embedded?: boolean }) {
     agentSteps,
   } = useChatContext();
 
+  // Pick 4 random questions from the catalog. Runs client-side (not during
+  // render) to avoid an SSR/client hydration mismatch; reshuffles only when the
+  // question set changes (i.e. locale switch), not on every re-render.
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    fetch(`${apiUrl}/suggested-questions`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.questions?.length) setFetchedQuestions(data.questions);
-      })
-      .catch(() => {});
-  }, []);
+    const shuffled = [...pool];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    setSuggestedQuestions(shuffled.slice(0, 4));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [poolKey]);
 
   useEffect(() => {
     if (messages.length === 0 && inputRef.current) {
