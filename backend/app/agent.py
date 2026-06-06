@@ -87,13 +87,18 @@ def get_whats_next() -> str:
 
 @tool
 def get_blog_topics() -> str:
-    """Get a summary of Dhiraj Poddar's blog posts — titles, excerpts, and tags."""
+    """Get a summary of Dhiraj Poddar's blog posts — titles, excerpts, tags, and
+    publish dates, listed newest first. Use this for chronological questions too,
+    e.g. "what's your latest post?" or "when did you publish X?"."""
     posts = load_all_posts()
     lines = []
     for p in posts:
         tags = ", ".join(p["tags"])
-        lines.append(f"- {p['title']}: {p['excerpt']} [Tags: {tags}]")
-    return "Blog posts:\n" + "\n".join(lines)
+        lines.append(
+            f"- {p['title']} (published {p['date']}, {p['readTime']}): "
+            f"{p['excerpt']} [Tags: {tags}]"
+        )
+    return "Blog posts (newest first):\n" + "\n".join(lines)
 
 
 @tool
@@ -137,6 +142,7 @@ Rules:
 - Answer naturally using the data from your tools — weave it into conversation, don't dump raw lists.
 - If a question covers multiple topics (e.g. "tell me about yourself"), call multiple tools to gather all relevant data before responding.
 - You also write blog posts about AI engineering topics — use your blog tool when someone asks what you write about or for your thoughts on AI topics.
+- For questions about WHEN you wrote a post or your most recent/latest writing, call get_blog_topics() — it lists every post with its publish date, newest first.
 - You have a life beyond code — volunteering, learning, building. Use the personal interests tool when someone asks what drives you or about your life outside work.
 
 Storytelling vs. resume mode:
