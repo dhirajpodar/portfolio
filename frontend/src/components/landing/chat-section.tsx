@@ -1,9 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import ChatPage from "@/components/chat-page";
 
 export default function ChatSection() {
+  const t = useTranslations("ChatSection");
+
   return (
     <section id="chat" className="px-4 pt-16 pb-8 sm:px-6">
       <motion.div
@@ -17,10 +20,10 @@ export default function ChatSection() {
           className="mb-1 text-lg font-semibold text-text-heading sm:text-xl"
           style={{ letterSpacing: "-0.02em" }}
         >
-          Ask my AI
+          {t("heading")}
         </h2>
         <p className="mb-6 text-sm text-text-muted">
-          It knows my resume, my projects, and how I think.
+          {t("subtitle")}
         </p>
       </motion.div>
       <ChatPage embedded />

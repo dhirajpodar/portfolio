@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   parseSSELine,
   type AgentStep,
@@ -28,6 +29,8 @@ export function useChat() {
   const [coldStartMsg, setColdStartMsg] = useState(false);
   const [agentSteps, setAgentSteps] = useState<AgentStep[]>([]);
   const [threadId] = useState(() => generateUUID());
+  const locale = useLocale();
+  const t = useTranslations("Chat");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -75,7 +78,7 @@ export function useChat() {
         const response = await fetch(`${apiUrl}/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text.trim(), thread_id: threadId }),
+          body: JSON.stringify({ message: text.trim(), thread_id: threadId, locale }),
           signal: controller.signal,
         });
 
@@ -216,7 +219,7 @@ export function useChat() {
           }
           return prev;
         });
-        setError("Chat is currently unavailable");
+        setError(t("unavailable"));
       } finally {
         clearTimeout(coldStartTimer);
         setColdStartMsg(false);
@@ -224,7 +227,7 @@ export function useChat() {
         abortRef.current = null;
       }
     },
-    [isStreaming, threadId],
+    [isStreaming, threadId, locale, t],
   );
 
   const handleRetry = useCallback(() => {

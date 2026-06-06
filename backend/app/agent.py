@@ -1,17 +1,14 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain.agents import create_agent
 from langchain.agents.middleware import (
     ModelRetryMiddleware,
-    ModelFallbackMiddleware,
     ModelCallLimitMiddleware,
     ContextEditingMiddleware,
 )
 from langgraph.checkpoint.memory import MemorySaver
 
-from app.config import settings
+from app.llm import build_llm
 from app.profile_data import (
     EXPERIENCE, SKILLS, EDUCATION, CONTACT, PERSONAL_INTERESTS,
     STORIES, AVAILABILITY, WHATS_NEXT,
@@ -87,13 +84,18 @@ def get_whats_next() -> str:
 
 @tool
 def get_blog_topics() -> str:
-    """Get a summary of Dhiraj Poddar's blog posts — titles, excerpts, and tags."""
+    """Get a summary of Dhiraj Poddar's blog posts — titles, excerpts, tags, and
+    publish dates, listed newest first. Use this for chronological questions too,
+    e.g. "what's your latest post?" or "when did you publish X?"."""
     posts = load_all_posts()
     lines = []
     for p in posts:
         tags = ", ".join(p["tags"])
-        lines.append(f"- {p['title']}: {p['excerpt']} [Tags: {tags}]")
-    return "Blog posts:\n" + "\n".join(lines)
+        lines.append(
+            f"- {p['title']} (published {p['date']}, {p['readTime']}): "
+            f"{p['excerpt']} [Tags: {tags}]"
+        )
+    return "Blog posts (newest first):\n" + "\n".join(lines)
 
 
 @tool
@@ -130,6 +132,7 @@ Response style:
 - If someone asks something you don't have data for, say so honestly — "I don't have that info on hand" not a hallucinated answer
 
 Rules:
+- LANGUAGE: Reply in the same language the user writes in — if they ask in German, answer in German; if in English, answer in English. If the message contains an explicit instruction like "(Please reply in German.)", follow it. Keep proper nouns, tech names, and code as-is. Your tool data is in English; translate the relevant facts into the reply language rather than dumping English text.
 - CRITICAL: You MUST call your tools BEFORE answering ANY question about your experience, skills, education, contact info, blog posts, or personal interests. NEVER answer from memory or general knowledge — always fetch the data first. If you answer without calling a tool, you WILL hallucinate.
 - IMPORTANT: When calling tools, call them immediately without any preamble, thinking, or narration text. Do NOT output text like "Let me look into that..." before your first tool call — just call the tools directly. Narration is only allowed BETWEEN deep-search tool calls to showcase the tree-search process.
 - For greetings or general conversation that don't ask about your background, you can respond directly.
@@ -137,6 +140,7 @@ Rules:
 - Answer naturally using the data from your tools — weave it into conversation, don't dump raw lists.
 - If a question covers multiple topics (e.g. "tell me about yourself"), call multiple tools to gather all relevant data before responding.
 - You also write blog posts about AI engineering topics — use your blog tool when someone asks what you write about or for your thoughts on AI topics.
+- For questions about WHEN you wrote a post or your most recent/latest writing, call get_blog_topics() — it lists every post with its publish date, newest first.
 - You have a life beyond code — volunteering, learning, building. Use the personal interests tool when someone asks what drives you or about your life outside work.
 
 Storytelling vs. resume mode:
@@ -168,58 +172,11 @@ tools = [
 
 memory = MemorySaver()
 
-# Primary: Gemini 2.5 Flash Lite (15 RPM, 1000 RPD, 250K TPM)
-# max_retries=0: on a 429 the Gemini client would otherwise burn ~33s of
-# internal exponential backoff before raising. We want it to fail fast so
-# ModelFallbackMiddleware can switch to Groq in ~0.2s instead.
-# include_thoughts + a low thinking_budget exposes a capped chain-of-thought
-# (thought summaries) that the frontend renders in the thinking panel.
-primary_llm = ChatGoogleGenerativeAI(
-    google_api_key=settings.GEMINI_API_KEY,
-    model=settings.MODEL_NAME,
-    temperature=0.5,
-    max_output_tokens=8192,
-    max_retries=0,
-    include_thoughts=True,
-    thinking_budget=512,
-)
-
-# Fallback 1: Groq Qwen3-32B (60 RPM, 500K TPD)
-# max_retries=0 for the same reason: rate-limited Groq should fall through to
-# OpenAI immediately rather than retrying.
-# reasoning_format="parsed" moves the model's <think> reasoning out of the
-# answer and into a separate reasoning_content channel we stream to the panel.
-groq_fallback_llm = ChatGroq(
-    api_key=settings.GROQ_API_KEY,
-    model="qwen/qwen3-32b",
-    temperature=0.5,
-    # Groq free tier caps a request at 6000 TPM and counts max_tokens toward it.
-    # With ~2.4k fixed overhead (system prompt + tool defs), 4096 reserved output
-    # pushed every request over the limit (413). 2048 leaves room for tool
-    # results while still fitting the reasoning + answer.
-    max_tokens=2048,
-    max_retries=0,
-    reasoning_format="parsed",
-)
-
-# Fallback 2: OpenAI (paid, used when Gemini and Groq are both rate-limited)
-# use_responses_api + reasoning summary exposes a capped chain-of-thought so
-# the thinking panel still works when the chain falls through to OpenAI.
-fallbacks: list = [groq_fallback_llm]
-if settings.OPENAI_API_KEY:
-    fallbacks.append(
-        ChatOpenAI(
-            api_key=settings.OPENAI_API_KEY,
-            model=settings.OPENAI_MODEL,
-            temperature=0.5,
-            max_tokens=4096,
-            use_responses_api=True,
-            reasoning={"effort": "low", "summary": "auto"},
-        )
-    )
+# Chat model comes from the LLM factory (OpenRouter). See app/llm.py.
+model = build_llm()
 
 agent = create_agent(
-    primary_llm,
+    model,
     tools=tools,
     system_prompt=SYSTEM_PROMPT,
     checkpointer=memory,
@@ -230,7 +187,6 @@ agent = create_agent(
             initial_delay=1.0,
             max_delay=15.0,
         ),
-        ModelFallbackMiddleware(*fallbacks),
         ModelCallLimitMiddleware(run_limit=8),
         ContextEditingMiddleware(),
     ],

@@ -1,0 +1,65 @@
+{
+  "Nav": {
+    "chat": "Chat",
+    "blog": "Blog",
+    "about": "About"
+  },
+  "LocaleSwitcher": {
+    "label": "Switch language",
+    "en": "EN",
+    "de": "DE"
+  },
+  "Hero": {
+    "quote": "Why read a <h>resume</h> when you can have a <h>conversation</h>?",
+    "cta": "Chat with my AI →",
+    "subtext": "Ask about my work, what I've shipped, or if I'm open to opportunities."
+  },
+  "ChatSection": {
+    "heading": "Ask my AI",
+    "subtitle": "It knows my resume, my projects, and how I think."
+  },
+  "Chat": {
+    "greetingTitleEmbedded": "What would you like to know?",
+    "greetingTitleHome": "Hey, I'm Dhiraj",
+    "greetingSubtitleEmbedded": "Ask about my experience, projects, tech stack, or how I approach problems.",
+    "greetingSubtitleHome": "An AI Engineer. Ask me about my work, how I think, or what I'm building.",
+    "placeholder": "Ask me anything...",
+    "send": "Send message",
+    "coldStart": "Waking up AI...",
+    "retry": "Retry",
+    "unavailable": "Chat is currently unavailable",
+    "suggested": [
+      "What have you built with AI agents?",
+      "What do you write about?",
+      "What drives you outside of work?",
+      "Are you open to new opportunities?",
+      "Walk me through a tough problem you solved"
+    ]
+  },
+  "AgentSteps": {
+    "thinking": "Thinking",
+    "generating": "Generating",
+    "tool": "Tool"
+  },
+  "ThinkingBlock": {
+    "thinking": "Thinking",
+    "using": "Using {tool}",
+    "used": "Used {tool}",
+    "writingAnswer": "Writing answer",
+    "headerStreaming": "Thinking…",
+    "thoughtProcess": "Thought process",
+    "thoughtProcessTools": "Thought process · {count, plural, one {# tool} other {# tools}}"
+  },
+  "About": {
+    "pageTitle": "About Me",
+    "pageSubtitle": "The story behind the code.",
+    "getInTouch": "Get in touch",
+    "location": "Location"
+  },
+  "Blog": {
+    "pageTitle": "Thinking Out Loud",
+    "pageSubtitle": "Notes on building AI systems in production.",
+    "noPosts": "No posts found for this tag.",
+    "backToBlog": "Back to blog"
+  }
+}

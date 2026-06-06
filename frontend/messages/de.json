@@ -1,0 +1,65 @@
+{
+  "Nav": {
+    "chat": "Chat",
+    "blog": "Blog",
+    "about": "Über mich"
+  },
+  "LocaleSwitcher": {
+    "label": "Sprache wechseln",
+    "en": "EN",
+    "de": "DE"
+  },
+  "Hero": {
+    "quote": "Warum einen <h>Lebenslauf</h> lesen, wenn du ein <h>Gespräch</h> führen kannst?",
+    "cta": "Mit meiner KI chatten →",
+    "subtext": "Frag mich über meine Arbeit, was ich entwickelt habe, oder ob ich offen für neue Möglichkeiten bin."
+  },
+  "ChatSection": {
+    "heading": "Frag meine KI",
+    "subtitle": "Sie kennt meinen Lebenslauf, meine Projekte und meine Denkweise."
+  },
+  "Chat": {
+    "greetingTitleEmbedded": "Was möchtest du wissen?",
+    "greetingTitleHome": "Hi, ich bin Dhiraj",
+    "greetingSubtitleEmbedded": "Frag über meine Erfahrung, meine Projekte, meinen Tech-Stack oder wie ich an Probleme herangehe.",
+    "greetingSubtitleHome": "Ein AI Engineer. Frag mich über meine Arbeit, meine Denkweise oder woran ich gerade baue.",
+    "placeholder": "Frag mich irgendetwas...",
+    "send": "Nachricht senden",
+    "coldStart": "KI wird aufgeweckt...",
+    "retry": "Erneut versuchen",
+    "unavailable": "Der Chat ist derzeit nicht verfügbar",
+    "suggested": [
+      "Was hast du mit KI-Agenten gebaut?",
+      "Worüber schreibst du?",
+      "Was treibt dich außerhalb der Arbeit an?",
+      "Bist du offen für neue Möglichkeiten?",
+      "Erkläre mir ein schwieriges Problem, das du gelöst hast"
+    ]
+  },
+  "AgentSteps": {
+    "thinking": "Denkt nach",
+    "generating": "Generiert",
+    "tool": "Tool"
+  },
+  "ThinkingBlock": {
+    "thinking": "Denkt nach",
+    "using": "Nutzt {tool}",
+    "used": "{tool} genutzt",
+    "writingAnswer": "Schreibt Antwort",
+    "headerStreaming": "Denkt nach…",
+    "thoughtProcess": "Gedankengang",
+    "thoughtProcessTools": "Gedankengang · {count, plural, one {# Tool} other {# Tools}}"
+  },
+  "About": {
+    "pageTitle": "Über mich",
+    "pageSubtitle": "Die Geschichte hinter dem Code.",
+    "getInTouch": "Kontakt",
+    "location": "Standort"
+  },
+  "Blog": {
+    "pageTitle": "Laut gedacht",
+    "pageSubtitle": "Notizen zum Bau von KI-Systemen in der Produktion.",
+    "noPosts": "Keine Beiträge für dieses Tag gefunden.",
+    "backToBlog": "Zurück zum Blog"
+  }
+}

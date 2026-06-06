@@ -64,6 +64,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     message: str = pydantic.Field(max_length=2000)
     thread_id: str | None = None
+    locale: str = "en"
 
 
 @app.get("/health")
@@ -123,8 +124,9 @@ def _split_reasoning(event):
     Groq (reasoning_format="parsed") puts it in additional_kwargs
     ["reasoning_content"]; Gemini (include_thoughts=True) returns it as content
     blocks flagged thought=True; OpenAI (responses API) returns a "reasoning"
-    block whose text lives in a `summary` list. The answer is the remaining
-    plain-text content.
+    block whose text lives in a `summary` list; OpenRouter exposes it via
+    additional_kwargs["reasoning"] (str/dict) or a "reasoning_details" array.
+    The answer is the remaining plain-text content.
     """
     reasoning = ""
     answer = ""
@@ -133,6 +135,18 @@ def _split_reasoning(event):
     rc = ak.get("reasoning_content") or ak.get("reasoning")
     if isinstance(rc, str):
         reasoning += rc
+    elif isinstance(rc, dict):
+        # OpenRouter may surface reasoning as a dict ({text|summary: ...}).
+        reasoning += rc.get("text") or rc.get("summary") or ""
+
+    # OpenRouter streams structured reasoning in a reasoning_details array;
+    # each object carries the text under "text" or "summary". A non-reasoning
+    # model returns nothing here, so the thinking panel stays empty.
+    for detail in ak.get("reasoning_details") or []:
+        if isinstance(detail, dict):
+            piece = detail.get("text") or detail.get("summary")
+            if isinstance(piece, str):
+                reasoning += piece
 
     content = event.content
     if isinstance(content, str):
@@ -250,9 +264,12 @@ async def _stream_agent(input_message, config, thread_id):
     yield "content", full_content
 
 
-async def stream_response(message: str, thread_id: str):
+async def stream_response(message: str, thread_id: str, locale: str = "en"):
     config = {"configurable": {"thread_id": thread_id}}
-    input_message = {"messages": [{"role": "user", "content": message}]}
+    # Auto-detect handles same-language replies; this prepended hint only forces
+    # the language when the UI locale (toggle) differs from what the user typed.
+    content = f"(Please reply in German.)\n\n{message}" if locale == "de" else message
+    input_message = {"messages": [{"role": "user", "content": content}]}
 
     logger.info(f"[{thread_id[:8]}] Chat request: {message[:100]}{'...' if len(message) > 100 else ''}")
 
@@ -340,7 +357,7 @@ async def chat(request: ChatRequest, http_request: Request):
     ))
 
     return StreamingResponse(
-        stream_response(request.message, thread_id),
+        stream_response(request.message, thread_id, request.locale),
         media_type="text/event-stream",
         headers=_SSE_HEADERS,
     )
