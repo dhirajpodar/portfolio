@@ -46,6 +46,17 @@ class ChatOpenRouter(ChatOpenAI):
 @lru_cache(maxsize=1)
 def build_llm() -> ChatOpenRouter:
     """Build the chat model from settings (cached — one shared instance)."""
+    # enabled:true is model-agnostic — each reasoning model picks its own effort
+    # (some only accept high/xhigh), and non-reasoning models ignore it. Avoids
+    # hardcoding an effort level the configured model may reject.
+    extra_body = {"reasoning": {"enabled": True}}
+    # OpenRouter's native fallback: it tries these models in order, so a primary
+    # outage or credit exhaustion quietly drops to the (free) secondary model.
+    if settings.OPENROUTER_FALLBACK_MODEL:
+        extra_body["models"] = [
+            settings.OPENROUTER_MODEL,
+            settings.OPENROUTER_FALLBACK_MODEL,
+        ]
     return ChatOpenRouter(
         api_key=settings.OPENROUTER_API_KEY,
         base_url=OPENROUTER_BASE_URL,
@@ -55,10 +66,7 @@ def build_llm() -> ChatOpenRouter:
         # max_retries=0 lets ModelRetryMiddleware own retries (avoids the client
         # doing its own backoff on top of the agent-level retry).
         max_retries=0,
-        # enabled:true is model-agnostic — each reasoning model picks its own
-        # effort (some only accept high/xhigh), and non-reasoning models ignore
-        # it. Avoids hardcoding an effort level the configured model may reject.
-        extra_body={"reasoning": {"enabled": True}},
+        extra_body=extra_body,
         default_headers={
             "HTTP-Referer": "https://dhirajpoddar.com",
             "X-Title": "Dhiraj Poddar Portfolio",

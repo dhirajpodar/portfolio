@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     # Free, tool-calling + reasoning capable. Reasoning streams to the thinking
     # panel; a non-reasoning model here simply shows nothing there.
     OPENROUTER_MODEL: str = "deepseek/deepseek-v4-flash"
+    # Secondary model OpenRouter falls back to (native `models` routing) if the
+    # primary errors or is unavailable. Free by default; set empty to disable.
+    OPENROUTER_FALLBACK_MODEL: str = "openai/gpt-oss-120b:free"
     CORS_ORIGINS: str = "*"
 
     # Email notifications (via Resend — https://resend.com)

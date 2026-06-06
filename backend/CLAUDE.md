@@ -53,7 +53,7 @@ content/
 
 ## Middleware
 
-- **ModelRetry:** Exponential backoff (2 retries, 1-15s delay) on the single OpenRouter model (OpenRouter does its own provider-level routing under the hood)
+- **ModelRetry:** Exponential backoff (2 retries, 1-15s delay) on the OpenRouter model. OpenRouter's native `models` routing falls the request back to `OPENROUTER_FALLBACK_MODEL` on a primary error/rate-limit/downtime
 - **ModelCallLimit:** Max 8 LLM calls per run
 - **ContextEditing:** Trims old tool outputs to save context
 
@@ -75,8 +75,9 @@ content/
 GEMINI_API_KEY=          # Required (primary LLM, or first fallback when OpenRouter is set)
 GROQ_API_KEY=            # Required (fallback LLM)
 MODEL_NAME=              # Default: gemini-2.5-flash-lite
-OPENROUTER_API_KEY=      # Optional: promotes OpenRouter to primary (free model)
+OPENROUTER_API_KEY=      # Required (chat model provider)
 OPENROUTER_MODEL=        # Default: deepseek/deepseek-v4-flash
+OPENROUTER_FALLBACK_MODEL=  # Default: openai/gpt-oss-120b:free (empty disables)
 CORS_ORIGINS=            # Default: *
 EMAIL_NOTIFICATIONS_ENABLED=  # Default: false
 RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_FROM  # Resend config (used when notifications enabled)
