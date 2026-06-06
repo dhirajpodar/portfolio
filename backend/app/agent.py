@@ -1,17 +1,14 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain.agents import create_agent
 from langchain.agents.middleware import (
     ModelRetryMiddleware,
-    ModelFallbackMiddleware,
     ModelCallLimitMiddleware,
     ContextEditingMiddleware,
 )
 from langgraph.checkpoint.memory import MemorySaver
 
-from app.config import settings
+from app.llm import build_llm
 from app.profile_data import (
     EXPERIENCE, SKILLS, EDUCATION, CONTACT, PERSONAL_INTERESTS,
     STORIES, AVAILABILITY, WHATS_NEXT,
@@ -169,58 +166,11 @@ tools = [
 
 memory = MemorySaver()
 
-# Primary: Gemini 2.5 Flash Lite (15 RPM, 1000 RPD, 250K TPM)
-# max_retries=0: on a 429 the Gemini client would otherwise burn ~33s of
-# internal exponential backoff before raising. We want it to fail fast so
-# ModelFallbackMiddleware can switch to Groq in ~0.2s instead.
-# include_thoughts + a low thinking_budget exposes a capped chain-of-thought
-# (thought summaries) that the frontend renders in the thinking panel.
-primary_llm = ChatGoogleGenerativeAI(
-    google_api_key=settings.GEMINI_API_KEY,
-    model=settings.MODEL_NAME,
-    temperature=0.5,
-    max_output_tokens=8192,
-    max_retries=0,
-    include_thoughts=True,
-    thinking_budget=512,
-)
-
-# Fallback 1: Groq Qwen3-32B (60 RPM, 500K TPD)
-# max_retries=0 for the same reason: rate-limited Groq should fall through to
-# OpenAI immediately rather than retrying.
-# reasoning_format="parsed" moves the model's <think> reasoning out of the
-# answer and into a separate reasoning_content channel we stream to the panel.
-groq_fallback_llm = ChatGroq(
-    api_key=settings.GROQ_API_KEY,
-    model="qwen/qwen3-32b",
-    temperature=0.5,
-    # Groq free tier caps a request at 6000 TPM and counts max_tokens toward it.
-    # With ~2.4k fixed overhead (system prompt + tool defs), 4096 reserved output
-    # pushed every request over the limit (413). 2048 leaves room for tool
-    # results while still fitting the reasoning + answer.
-    max_tokens=2048,
-    max_retries=0,
-    reasoning_format="parsed",
-)
-
-# Fallback 2: OpenAI (paid, used when Gemini and Groq are both rate-limited)
-# use_responses_api + reasoning summary exposes a capped chain-of-thought so
-# the thinking panel still works when the chain falls through to OpenAI.
-fallbacks: list = [groq_fallback_llm]
-if settings.OPENAI_API_KEY:
-    fallbacks.append(
-        ChatOpenAI(
-            api_key=settings.OPENAI_API_KEY,
-            model=settings.OPENAI_MODEL,
-            temperature=0.5,
-            max_tokens=4096,
-            use_responses_api=True,
-            reasoning={"effort": "low", "summary": "auto"},
-        )
-    )
+# Chat model comes from the LLM factory (OpenRouter). See app/llm.py.
+model = build_llm()
 
 agent = create_agent(
-    primary_llm,
+    model,
     tools=tools,
     system_prompt=SYSTEM_PROMPT,
     checkpointer=memory,
@@ -231,7 +181,6 @@ agent = create_agent(
             initial_delay=1.0,
             max_delay=15.0,
         ),
-        ModelFallbackMiddleware(*fallbacks),
         ModelCallLimitMiddleware(run_limit=8),
         ContextEditingMiddleware(),
     ],

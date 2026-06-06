@@ -4,7 +4,7 @@
 
 - **Framework:** FastAPI with SSE streaming
 - **Agent:** LangGraph agent (11 tools) via `create_agent` with middleware
-- **LLM:** Gemini 2.5 Flash Lite (primary) with Groq Qwen3-32B fallback
+- **LLM:** OpenRouter (default `deepseek/deepseek-v4-flash`) via the `app/llm.py` factory. OpenAI-compatible, so it uses a `ChatOpenAI` subclass with OpenRouter's `base_url`
 - **Retrieval:** Hybrid -- fast-path tools + PageIndex tree-search
 - **Python:** 3.10+
 - **Deps:** `requirements.txt` (pip) / `pyproject.toml` (Poetry)
@@ -15,7 +15,8 @@
 app/
 ├── main.py              FastAPI app, SSE streaming, /chat, /blog, /pageindex endpoints
 ├── agent.py             LangGraph agent with middleware, 9 tools, system prompt
-├── config.py            Pydantic settings (GEMINI_API_KEY, GROQ_API_KEY, MODEL_NAME)
+├── llm.py               LLM factory — builds the OpenRouter chat model from settings
+├── config.py            Pydantic settings (OPENROUTER_API_KEY, OPENROUTER_MODEL)
 ├── profile_data.py      Static profile content (experience, skills, projects, etc.)
 ├── blog.py              Blog post loading from content/posts/ (frontmatter + markdown)
 ├── notifications.py     Email notifications for new chat questions
@@ -52,8 +53,7 @@ content/
 
 ## Middleware
 
-- **ModelRetry:** Exponential backoff (2 retries, 1-15s delay)
-- **ModelFallback:** Gemini -> Groq automatic failover
+- **ModelRetry:** Exponential backoff (2 retries, 1-15s delay) on the single OpenRouter model (OpenRouter does its own provider-level routing under the hood)
 - **ModelCallLimit:** Max 8 LLM calls per run
 - **ContextEditing:** Trims old tool outputs to save context
 
@@ -72,9 +72,11 @@ content/
 ## Environment Variables
 
 ```
-GEMINI_API_KEY=          # Required (primary LLM)
+GEMINI_API_KEY=          # Required (primary LLM, or first fallback when OpenRouter is set)
 GROQ_API_KEY=            # Required (fallback LLM)
 MODEL_NAME=              # Default: gemini-2.5-flash-lite
+OPENROUTER_API_KEY=      # Optional: promotes OpenRouter to primary (free model)
+OPENROUTER_MODEL=        # Default: deepseek/deepseek-v4-flash
 CORS_ORIGINS=            # Default: *
 EMAIL_NOTIFICATIONS_ENABLED=  # Default: false
 RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_FROM  # Resend config (used when notifications enabled)

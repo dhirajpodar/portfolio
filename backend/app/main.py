@@ -124,8 +124,9 @@ def _split_reasoning(event):
     Groq (reasoning_format="parsed") puts it in additional_kwargs
     ["reasoning_content"]; Gemini (include_thoughts=True) returns it as content
     blocks flagged thought=True; OpenAI (responses API) returns a "reasoning"
-    block whose text lives in a `summary` list. The answer is the remaining
-    plain-text content.
+    block whose text lives in a `summary` list; OpenRouter exposes it via
+    additional_kwargs["reasoning"] (str/dict) or a "reasoning_details" array.
+    The answer is the remaining plain-text content.
     """
     reasoning = ""
     answer = ""
@@ -134,6 +135,18 @@ def _split_reasoning(event):
     rc = ak.get("reasoning_content") or ak.get("reasoning")
     if isinstance(rc, str):
         reasoning += rc
+    elif isinstance(rc, dict):
+        # OpenRouter may surface reasoning as a dict ({text|summary: ...}).
+        reasoning += rc.get("text") or rc.get("summary") or ""
+
+    # OpenRouter streams structured reasoning in a reasoning_details array;
+    # each object carries the text under "text" or "summary". A non-reasoning
+    # model returns nothing here, so the thinking panel stays empty.
+    for detail in ak.get("reasoning_details") or []:
+        if isinstance(detail, dict):
+            piece = detail.get("text") or detail.get("summary")
+            if isinstance(piece, str):
+                reasoning += piece
 
     content = event.content
     if isinstance(content, str):

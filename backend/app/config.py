@@ -2,11 +2,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    GROQ_API_KEY: str = ""
-    GEMINI_API_KEY: str = ""
-    OPENAI_API_KEY: str = ""
-    MODEL_NAME: str = "gemini-2.5-flash-lite"
-    OPENAI_MODEL: str = "gpt-5.4-mini"
+    OPENROUTER_API_KEY: str = ""
+    # Free, tool-calling + reasoning capable. Reasoning streams to the thinking
+    # panel; a non-reasoning model here simply shows nothing there.
+    OPENROUTER_MODEL: str = "deepseek/deepseek-v4-flash"
     CORS_ORIGINS: str = "*"
 
     # Email notifications (via Resend — https://resend.com)
@@ -20,14 +19,20 @@ class Settings(BaseSettings):
     IPINFO_TOKEN: str = ""
 
     # Rate limits on /chat (protects LLM quota).
-    # Grounded in Gemini 2.5 Flash Lite free tier (15 RPM / 1000 RPD) and
-    # agent's 8-call-per-chat ceiling — see backend/CLAUDE.md.
+    # Grounded in the OpenRouter free-model daily cap and the agent's
+    # 8-call-per-chat ceiling — see backend/CLAUDE.md.
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_PER_IP_PER_MIN: int = 6
     RATE_LIMIT_PER_IP_PER_DAY: int = 40
     RATE_LIMIT_GLOBAL_PER_DAY: int = 500
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    # extra="ignore": tolerate unrelated env vars (e.g. GROQ_API_KEY, used only
+    # at build time by scripts/build_index.py) instead of erroring on them.
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "extra": "ignore",
+    }
 
 
 settings = Settings()
